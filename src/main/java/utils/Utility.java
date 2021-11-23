@@ -8,13 +8,17 @@ package utils;
 import java.util.Properties;
 import java.util.Set;
 import com.google.gson.*;
+import entities.Currency;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import utils.api.MakeOptions;
 
 /**
@@ -32,6 +36,8 @@ public class Utility {
         for (Map.Entry<String, String> set : makeOptions.getHeaders().entrySet()) {
             con.setRequestProperty(set.getKey(), set.getValue());
         }
+        
+        
 
         String res = new Scanner(con.getInputStream()).useDelimiter("\\Z").next();
         
@@ -48,6 +54,28 @@ public class Utility {
             }
     }
     
+    public static void populateCurrency() throws IOException {
+        EntityManagerFactory emf = EMF_Creator.createEntityManagerFactory();
+        EntityManager em = emf.createEntityManager();
+        try {      
+            MakeOptions makeOptions = new MakeOptions("GET");
+            String res = fetchData("https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies.json", makeOptions);
+            Gson gson = new Gson();
+            HashMap<String, String> map = gson.fromJson(res, HashMap.class);
+
+            em.getTransaction().begin();
+            for (Map.Entry<String, String> set : map.entrySet()) {
+                em.persist(new Currency(set.getKey(), set.getValue()));
+            }
+            em.getTransaction().commit();         
+        } finally {
+            em.close();
+        }
+        
+    }
  
 
+    public static void main(String[] args) throws IOException {
+        //populateCurrency();
+    }
 }

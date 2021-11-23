@@ -7,6 +7,8 @@ import entities.Role;
 import entities.Stock;
 import entities.Transaction;
 import entities.User;
+import errorhandling.API_Exception;
+import java.io.IOException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.AfterAll;
@@ -60,7 +62,7 @@ public class FacadeTest {
             userRole = new Role("user");
             adminRole = new Role("admin");
             
-            s1 = new Stock("s1","test1 INC.");
+            s1 = new Stock("AAPL","Apple Inc.");
             s2 = new Stock("s2","test2 INC.");
             s3 = new Stock("s3","test3 INC.");
             s4 = new Stock("s4","test4 INC.");
@@ -140,6 +142,36 @@ public class FacadeTest {
         Assertions.assertNotNull(newTrans.getId());
     }
     
+    
+    @Test
+    public void testGetCurrencyFromDatabase() throws API_Exception {
+        Currency currency = stockFacade.getCurrencyFromDatabase(c1.getCode());
+        assertEquals(currency.getCode(), c1.getCode());
+    }
+    
+    @Test
+    public void testGetCurrencyFromDatabaseWrongCurrency() {
+        API_Exception error = Assertions.assertThrows(API_Exception.class, () -> {
+            stockFacade.getCurrencyFromDatabase("fail");
+        });
+        assertEquals("Currency not found", error.getMessage());
+    }
+    
+    @Test
+    public void testGetStockFromApi() throws IOException, API_Exception {
+        EntityManager em = emf.createEntityManager();
+        Stock stock = stockFacade.getStockFromApi("NAS.OL");
+        Stock stockFromDB = em.find(Stock.class, "NAS.OL");
+        assertEquals(stock.getSymbol(), stockFromDB.getSymbol());
+    }
+    
+    @Test
+    public void testGetStockFromApiWrongSymbol() {
+        API_Exception error = Assertions.assertThrows(API_Exception.class, () -> {
+            stockFacade.getStockFromApi("Fail_symbol");
+        });
+        assertEquals("Stock symbol not found", error.getMessage());
+    }
     
 
 }

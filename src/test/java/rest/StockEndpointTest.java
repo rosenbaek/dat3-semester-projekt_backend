@@ -175,8 +175,8 @@ public class StockEndpointTest {
         JsonObject jsonBody = new JsonObject();
         jsonBody.addProperty("units", 100);
         jsonBody.addProperty("boughtPrice", 10.10);
-        jsonBody.addProperty("stockSymbol", "testAdd");
-        jsonBody.addProperty("currencyCode", "testCurrencyCode");
+        jsonBody.addProperty("stockSymbol", "AAPL");
+        jsonBody.addProperty("currencyCode", c4.getCode());
         
         login(user.getUserName(),"testUser");
         given()
@@ -186,5 +186,43 @@ public class StockEndpointTest {
                 .when().post("/stock")
                 .then()
                 .body("id", greaterThan(0));
+    }
+    
+    @Test
+    public void testAddTransactionWithWrongCurrency() {
+        JsonObject jsonBody = new JsonObject();
+        jsonBody.addProperty("units", 100);
+        jsonBody.addProperty("boughtPrice", 10.10);
+        jsonBody.addProperty("stockSymbol", "AAPL");
+        jsonBody.addProperty("currencyCode", "fail");
+
+        login(user.getUserName(), "testUser");
+        given()
+                .contentType("application/json")
+                .header("x-access-token", securityToken)
+                .body(jsonBody.toString())
+                .when().post("/stock")
+                .then()
+                .statusCode(400)
+                .body("message", equalTo("Currency not found"));
+    }
+    
+    @Test
+    public void testAddTransactionWithWrongSymbol() {
+        JsonObject jsonBody = new JsonObject();
+        jsonBody.addProperty("units", 100);
+        jsonBody.addProperty("boughtPrice", 10.10);
+        jsonBody.addProperty("stockSymbol", "failSymbol");
+        jsonBody.addProperty("currencyCode", c4.getCode());
+
+        login(user.getUserName(), "testUser");
+        given()
+                .contentType("application/json")
+                .header("x-access-token", securityToken)
+                .body(jsonBody.toString())
+                .when().post("/stock")
+                .then()
+                .statusCode(400)
+                .body("message", equalTo("Stock symbol not found"));
     }
 }
