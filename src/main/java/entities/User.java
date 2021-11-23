@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -21,6 +22,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 @Entity
 @Table(name = "users")
+@NamedQuery(name = "User.deleteAllRows", query = "DELETE from User")
 public class User implements Serializable {
 
     @Size(max = 255)
@@ -103,6 +105,7 @@ public class User implements Serializable {
 
     public void addTransaction(Transaction transaction) {
         this.transactionList.add(transaction);
+        transaction.setUsersUserName(this);
     }
 
     public Currency getCurrencyCode() {

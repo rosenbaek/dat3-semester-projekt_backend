@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "stocks")
+@NamedQuery(name = "Stock.deleteAllRows", query = "DELETE from Stock")
 public class Stock implements Serializable {
 
     private static final long serialVersionUID = 1L;

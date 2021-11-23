@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "roles")
+@NamedQuery(name = "Role.deleteAllRows", query = "DELETE from Role")
 public class Role implements Serializable {
 
     

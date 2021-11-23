@@ -44,8 +44,12 @@ public class FacadeTest {
         EntityManager em = emf.createEntityManager();
         try {
             em.getTransaction().begin();
+            em.createNamedQuery("Transaction.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Stock.deleteAllRows").executeUpdate();
             em.createNamedQuery("User.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Currency.deleteAllRows").executeUpdate();
             em.createNamedQuery("Role.deleteAllRows").executeUpdate();
+            
             user = new User("user", "testUser");
             admin = new User("admin", "testAdmin");
             both = new User("user_admin", "testBoth");
@@ -66,7 +70,7 @@ public class FacadeTest {
             t1 = new Transaction(s1,100,c1,1000.1);
             t2 = new Transaction(s2,200,c2,2000.2);
             t3 = new Transaction(s3,300,c3,3000.3);
-            t3 = new Transaction(s4,400,c4,4000.4);
+            t4 = new Transaction(s4,400,c4,4000.4);
  
             user.addRole(userRole);
             admin.addRole(adminRole);
@@ -87,6 +91,21 @@ public class FacadeTest {
             em.persist(user);
             em.persist(admin);
             em.persist(both);
+            
+            em.persist(c1);
+            em.persist(c2);
+            em.persist(c3);
+            em.persist(c4);
+            
+            em.persist(s1);
+            em.persist(s2);
+            em.persist(s3);
+            em.persist(s4);
+            
+            em.persist(t1);
+            em.persist(t2);
+            em.persist(t3);
+            em.persist(t4);
             em.getTransaction().commit();
             
         } finally {
@@ -98,7 +117,17 @@ public class FacadeTest {
     // TODO: Delete or change this method 
     @Test
     public void testTrue() throws Exception {
-        assertEquals(true, true);
+        EntityManager em = emf.createEntityManager();
+        User _both; 
+        try {
+            _both = em.find(User.class, both.getUserName());
+        
+        } finally{
+            em.close();
+        }
+        
+        
+        assertEquals(_both, both);
     }
 
 }
