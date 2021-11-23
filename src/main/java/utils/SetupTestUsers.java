@@ -1,6 +1,7 @@
 package utils;
 
 
+import entities.Currency;
 import entities.Role;
 import entities.User;
 
@@ -24,6 +25,7 @@ public class SetupTestUsers {
     User admin = new User("admin", "testAdmin");
     User both = new User("user_admin", "testBoth");
 
+    Currency c1 = new Currency("code_c1","name_c1");
     if(admin.getUserPass().equals("test")||user.getUserPass().equals("test")||both.getUserPass().equals("test"))
       throw new UnsupportedOperationException("You have not changed the passwords");
 
@@ -34,11 +36,15 @@ public class SetupTestUsers {
     admin.addRole(adminRole);
     both.addRole(userRole);
     both.addRole(adminRole);
+    user.setCurrencyCode(c1);
+    admin.setCurrencyCode(c1);
+    both.setCurrencyCode(c1);
     em.persist(userRole);
     em.persist(adminRole);
     em.persist(user);
     em.persist(admin);
     em.persist(both);
+    em.persist(c1);
     em.getTransaction().commit();
     System.out.println("PW: " + user.getUserPass());
     System.out.println("Testing user with OK password: " + user.verifyPassword("test"));

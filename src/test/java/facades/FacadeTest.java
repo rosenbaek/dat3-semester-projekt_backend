@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.Test;
 public class FacadeTest {
 
     private static EntityManagerFactory emf;
+    private static StockFacade stockFacade;
     private static User user,admin,both;
     private static Role userRole,adminRole;
     private static Stock s1,s2,s3,s4;
@@ -35,6 +37,7 @@ public class FacadeTest {
     @BeforeAll
     public static void setUpClass() {
        emf = EMF_Creator.createEntityManagerFactoryForTest();
+       stockFacade = StockFacade.getStockFacade(emf);
     }
 
     
@@ -127,7 +130,16 @@ public class FacadeTest {
         }
         
         
-        assertEquals(_both, both);
+        assertEquals(_both.getUserName(), both.getUserName());
     }
+    
+    @Test
+    public void testAddTransaction() {
+        Transaction newTransaction = new Transaction(s1,111,c1,111.1);
+        Transaction newTrans = stockFacade.addTransaction(newTransaction, user.getUserName());
+        Assertions.assertNotNull(newTrans.getId());
+    }
+    
+    
 
 }
