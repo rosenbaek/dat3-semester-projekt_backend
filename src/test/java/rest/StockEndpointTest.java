@@ -21,6 +21,7 @@ import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasSize;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -226,8 +227,8 @@ public class StockEndpointTest {
                 .body("message", equalTo("Stock symbol not found"));
     }
     
-    //@Test
-    public void testGetUser() {
+    @Test
+    public void testGetUser_username() {
         login(user.getUserName(), "testUser");
         given()
                 .contentType("application/json")
@@ -235,6 +236,18 @@ public class StockEndpointTest {
                 .when().get("/stock")
                 .then()
                 .statusCode(200)
-                .body(equalTo("user")); 
+                .body("username", equalTo(user.getUserName())); 
+    }
+    
+    @Test
+    public void testGetUser_transactionsSize() {
+        login(user.getUserName(), "testUser");
+        given()
+                .contentType("application/json")
+                .header("x-access-token", securityToken)
+                .when().get("/stock")
+                .then()
+                .statusCode(200)
+                .body("transactions", hasSize(2)); 
     }
 }

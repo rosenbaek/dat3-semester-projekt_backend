@@ -174,9 +174,15 @@ public class FacadeTest {
     }
     
     @Test
-    public void testGetUser() {
+    public void testGetUser_username() {
         User userFromDB = stockFacade.getUser(user.getUserName());
         assertEquals(userFromDB.getUserName(), user.getUserName());     
+    }
+    
+    @Test
+    public void testGetUser_transactionsSize() {
+        User userFromDB = stockFacade.getUser(user.getUserName());
+        assertEquals(userFromDB.getTransactionList().size(), user.getTransactionList().size());     
     }
     
 
