@@ -58,7 +58,7 @@ public class StockResource {
         
         Transaction outputT = stockFacade.addTransaction(inputT, username);
         
-        //Returner user DTO.
+        //Returner DTO.
         AddTransactionDTO outPutDTO = new AddTransactionDTO(outputT);
         
         

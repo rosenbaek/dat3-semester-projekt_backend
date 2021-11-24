@@ -96,12 +96,11 @@ public class StockFacade {
         if (jsonArray.size() > 0) {
             for (JsonElement jsonElement : jsonArray) {
                 StockDTO stockDTO = gson.fromJson(jsonElement, StockDTO.class);
-                Stock stock = em.find(Stock.class, stockDTO.getSymbol());
-                if (stock == null) {
-                    em.getTransaction().begin();
-                    stock = em.merge(stockDTO.getEntity());
-                    em.getTransaction().commit();
-                }
+                
+                em.getTransaction().begin();
+                Stock stock = em.merge(stockDTO.getEntity()); //We use merge instead of persist because merge returns the managed object
+                em.getTransaction().commit();
+
                 dtos.add(stock);
             }
         } else {
