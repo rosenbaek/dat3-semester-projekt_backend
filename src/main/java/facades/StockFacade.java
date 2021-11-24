@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import security.errorhandling.AuthenticationException;
 import utils.Utility;
 import utils.api.MakeOptions;
 
@@ -36,11 +37,19 @@ public class StockFacade {
     private StockFacade() {
     }
 
-    /**
-     *
-     * @param _emf
-     * @return the instance of this facade.
-     */
+    
+    public User getUser(String username) {
+        EntityManager em = emf.createEntityManager();
+        User user;
+        try {
+            user = em.find(User.class, username);
+        } finally {
+            em.close();
+        }
+        return user;
+    }
+    
+    
     public static StockFacade getStockFacade(EntityManagerFactory _emf) {
         if (instance == null) {
             emf = _emf;

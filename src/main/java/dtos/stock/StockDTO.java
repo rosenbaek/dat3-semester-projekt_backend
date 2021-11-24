@@ -26,4 +26,11 @@ public class StockDTO {
     public Stock getEntity() {
         return new Stock(symbol,shortName);
     }
+
+    public StockDTO(Stock stock) {
+        this.symbol = stock.getSymbol();
+        this.shortName = stock.getName();
+    }
+    
+    
 }

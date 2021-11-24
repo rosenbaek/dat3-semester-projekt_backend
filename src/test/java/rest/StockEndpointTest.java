@@ -225,4 +225,16 @@ public class StockEndpointTest {
                 .statusCode(400)
                 .body("message", equalTo("Stock symbol not found"));
     }
+    
+    //@Test
+    public void testGetUser() {
+        login(user.getUserName(), "testUser");
+        given()
+                .contentType("application/json")
+                .header("x-access-token", securityToken)
+                .when().get("/stock")
+                .then()
+                .statusCode(200)
+                .body(equalTo("user")); 
+    }
 }

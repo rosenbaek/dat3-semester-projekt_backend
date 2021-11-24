@@ -3,15 +3,18 @@ package rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dtos.stock.AddTransactionDTO;
+import dtos.user.UserDTO;
 import entities.Currency;
 import entities.Stock;
 import entities.Transaction;
+import entities.User;
 import errorhandling.API_Exception;
 import facades.StockFacade;
 import java.io.IOException;
 import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
@@ -33,6 +36,20 @@ public class StockResource {
 
     @Context
     SecurityContext securityContext;
+    
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    @RolesAllowed("user")
+    public Response getUserData() {
+        //get username from token
+        String username = securityContext.getUserPrincipal().getName();
+        
+        //Get user from database
+        User user = stockFacade.getUser(username);
+        UserDTO userDTO = new UserDTO(user);
+        //return userDTO
+        return Response.ok().entity(gson.toJson(userDTO)).build();
+    }
 
     @POST
     @Consumes({MediaType.APPLICATION_JSON})

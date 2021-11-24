@@ -5,6 +5,8 @@
  */
 package dtos.user;
 
+import dtos.stock.AddTransactionDTO;
+import dtos.stock.TransactionDTO;
 import entities.User;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +19,12 @@ public class UserDTO {
     private String username;
     private String password;
     private List<RoleDTO> roles = new ArrayList<>();
-
+    private List<TransactionDTO> transactions = new ArrayList<>();
+    
     public UserDTO(User user) {
         this.username = user.getUserName();
         user.getRoleList().forEach(role->this.roles.add(new RoleDTO(role)));
+        user.getTransactionList().forEach(transaction -> this.transactions.add(new TransactionDTO(transaction)));
     }
 
     public UserDTO() {

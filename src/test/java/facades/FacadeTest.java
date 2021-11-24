@@ -173,5 +173,11 @@ public class FacadeTest {
         assertEquals("Stock symbol not found", error.getMessage());
     }
     
+    @Test
+    public void testGetUser() {
+        User userFromDB = stockFacade.getUser(user.getUserName());
+        assertEquals(userFromDB.getUserName(), user.getUserName());     
+    }
+    
 
 }
