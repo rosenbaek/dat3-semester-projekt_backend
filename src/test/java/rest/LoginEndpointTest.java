@@ -241,7 +241,7 @@ public class LoginEndpointTest {
     @Test
     public void testCreateUserWithExistingUsername() {
         String username = "user";
-        String json = String.format("{\"username\": \"%s\", \"password\": \"%s\", \"roles\": [{\"rolename\":\"%s\"}]}", username, "pas123", "user");
+        String json = String.format("{\"username\": \"%s\", \"password\": \"%s\", \"roles\": [{\"rolename\":\"%s\"}] }", username, "pas123", "user", "dkk");
         given()
                 .contentType("application/json")
                 .body(json)

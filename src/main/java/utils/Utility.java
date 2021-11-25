@@ -67,7 +67,7 @@ public class Utility {
 
             em.getTransaction().begin();
             for (Map.Entry<String, String> set : map.entrySet()) {
-                em.persist(new Currency(set.getKey(), set.getValue()));
+                em.persist(new Currency(set.getKey(), set.getValue(),0.0));
             }
             em.getTransaction().commit();         
         } finally {

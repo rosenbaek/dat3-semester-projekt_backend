@@ -7,19 +7,16 @@ package entities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
@@ -41,14 +38,29 @@ public class Currency implements Serializable {
     private List<Stock> stockList = new ArrayList<>();
     @OneToMany(mappedBy = "currencyCode")
     private List<User> userList = new ArrayList<>();
-    
+    @Column(name = "value")
+    private Double value;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "last_updated")
+    private Date lastUpdated;    
 
     public Currency() {
     }
 
-    public Currency(String code, String name) {
+    public Currency(String code, String name, Double value) {
         this.code = code;
         this.name = name;
+        this.value = value;
+        this.lastUpdated = new Date();
+    }
+
+    public Double getValue() {
+        return value;
+    }
+
+    public Date getLastUpdated() {
+        return lastUpdated;
     }
 
 

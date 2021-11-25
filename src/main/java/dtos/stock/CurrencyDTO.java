@@ -14,16 +14,18 @@ import entities.Currency;
 public class CurrencyDTO {
     private String code;
     private String name;
+    private Double value;
 
     public CurrencyDTO(Currency currency) {
         this.code = currency.getCode();
         this.name = currency.getName();
+        this.value = currency.getValue();
     }
     
     
     
     
     public Currency getEntity() {
-        return new Currency(this.code, this.name);
+        return new Currency(this.code, this.name, this.value);
     }
 }

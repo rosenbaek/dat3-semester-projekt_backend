@@ -1,6 +1,7 @@
 package facades;
 
 import dtos.user.UserDTO;
+import entities.Currency;
 import entities.User;
 import entities.Role;
 import errorhandling.API_Exception;
@@ -66,6 +67,15 @@ public class UserFacade {
                     throw new NotFoundException("Role doesn't exist");
                 }
             }
+            if (userDTO.getDefaultCurrency() != null) {
+                Currency currency = em.find(Currency.class, userDTO.getDefaultCurrency());
+                if (currency == null) {
+                    throw new API_Exception("Currency does not exists", 404);
+                }
+                user.setCurrencyCode(currency);
+            }
+            
+            
             em.persist(user);
             em.getTransaction().commit();
         } finally {

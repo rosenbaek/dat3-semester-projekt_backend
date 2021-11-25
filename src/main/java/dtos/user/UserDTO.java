@@ -6,6 +6,7 @@
 package dtos.user;
 
 import dtos.stock.AddTransactionDTO;
+import dtos.stock.CurrencyDTO;
 import dtos.stock.TransactionDTO;
 import entities.User;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.List;
 public class UserDTO {
     private String username;
     private Double totalPortfolioValue;
+    private String defaultCurrency;
     private String password;
     private List<RoleDTO> roles = new ArrayList<>();
     private List<TransactionDTO> transactions = new ArrayList<>();
@@ -26,6 +28,10 @@ public class UserDTO {
         this.username = user.getUserName();
         user.getRoleList().forEach(role->this.roles.add(new RoleDTO(role)));
         user.getTransactionList().forEach(transaction -> this.transactions.add(new TransactionDTO(transaction)));
+        if (user.getCurrencyCode() != null) {
+            this.defaultCurrency = user.getCurrencyCode().getCode();
+        }
+        
     }
 
     public UserDTO() {
@@ -41,6 +47,11 @@ public class UserDTO {
     public void setTotalPortfolioValue(Double totalPortfolioValue) {
         this.totalPortfolioValue = totalPortfolioValue;
     }
+
+    public String getDefaultCurrency() {
+        return defaultCurrency;
+    }
+    
     
     
 }
