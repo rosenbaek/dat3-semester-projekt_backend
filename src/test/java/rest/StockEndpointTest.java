@@ -22,6 +22,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -249,5 +250,17 @@ public class StockEndpointTest {
                 .then()
                 .statusCode(200)
                 .body("transactions", hasSize(2)); 
+    }
+    
+    //@Test
+    public void testGetUser_totalPortFolioValue() {
+        login(user.getUserName(), "testUser");
+        given()
+                .contentType("application/json")
+                .header("x-access-token", securityToken)
+                .when().get("/stock")
+                .then()
+                .statusCode(200)
+                .body("totalPortfolioValue", equalTo(500000.0)); 
     }
 }

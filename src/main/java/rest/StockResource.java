@@ -26,6 +26,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import utils.EMF_Creator;
+import utils.Utility;
 
 
 @Path("stock")
@@ -49,9 +50,11 @@ public class StockResource {
         //Get user from database
         User user = stockFacade.getUserData(username);
         
-        
+        Double totalPortFolioValue = Utility.calcTotalPortFolioValue(user);
+      
         
         UserDTO userDTO = new UserDTO(user);
+        userDTO.setTotalPortfolioValue(totalPortFolioValue);
         //return userDTO
         return Response.ok().entity(gson.toJson(userDTO)).build();
     }

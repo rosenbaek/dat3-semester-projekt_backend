@@ -17,6 +17,7 @@ import java.util.List;
  */
 public class UserDTO {
     private String username;
+    private Double totalPortfolioValue;
     private String password;
     private List<RoleDTO> roles = new ArrayList<>();
     private List<TransactionDTO> transactions = new ArrayList<>();
@@ -36,4 +37,10 @@ public class UserDTO {
         this.roles.forEach(roleDTO->user.addRole(roleDTO.getEntity()));
         return user;
     }
+
+    public void setTotalPortfolioValue(Double totalPortfolioValue) {
+        this.totalPortfolioValue = totalPortfolioValue;
+    }
+    
+    
 }
