@@ -16,7 +16,6 @@ public class TransactionDTO {
     private StockDTO stock;
     private int units;
     private double boughtPrice;
-    private CurrencyDTO currency;
 
     public TransactionDTO(Transaction transaction) {
         if (transaction.getId() != null) {
@@ -25,7 +24,6 @@ public class TransactionDTO {
         this.stock = new StockDTO(transaction.getStocksSymbol());
         this.units = transaction.getUnits();
         this.boughtPrice = transaction.getBoughtPrice();
-        this.currency = new CurrencyDTO(transaction.getCurrenciesCode());
     }
 
     

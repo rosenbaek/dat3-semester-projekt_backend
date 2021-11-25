@@ -67,20 +67,22 @@ public class FacadeTest {
             userRole = new Role("user");
             adminRole = new Role("admin");
             
-            s1 = new Stock("AAPL","Apple Inc.",1000.0);
-            s2 = new Stock("s2","test2 INC.",2000.0);
-            s3 = new Stock("s3","test3 INC.",3000.0);
-            s4 = new Stock("s4","test4 INC.",4000.0);
-         
-            c1 = new Currency("code_c1","name_c1");
-            c2 = new Currency("code_c2","name_c2");
-            c3 = new Currency("code_c3","name_c3");
-            c4 = new Currency("code_c4","name_c4");
+            c1 = new Currency("nok", "name_c1");
+            c2 = new Currency("dkk", "name_c2");
+            c3 = new Currency("usd", "name_c3");
+            c4 = new Currency("code_c4", "name_c4");
             
-            t1 = new Transaction(s1,100,c1,1000.1);
-            t2 = new Transaction(s2,200,c2,2000.2);
-            t3 = new Transaction(s3,300,c3,3000.3);
-            t4 = new Transaction(s4,400,c4,4000.4);
+            s1 = new Stock("AAPL","Apple Inc.",c1,1000.0);
+            s2 = new Stock("s2","test2 INC.",c2,2000.0);
+            s3 = new Stock("s3","test3 INC.",c3,3000.0);
+            s4 = new Stock("s4","test4 INC.",c4,4000.0);
+         
+            
+            
+            t1 = new Transaction(s1,100,1000.1);
+            t2 = new Transaction(s2,200,2000.2);
+            t3 = new Transaction(s3,300,3000.3);
+            t4 = new Transaction(s4,400,4000.4);
  
             user.addRole(userRole);
             admin.addRole(adminRole);
@@ -142,7 +144,7 @@ public class FacadeTest {
     
     @Test
     public void testAddTransaction() {
-        Transaction newTransaction = new Transaction(s1,111,c1,111.1);
+        Transaction newTransaction = new Transaction(s1,111,111.1);
         Transaction newTrans = stockFacade.addTransaction(newTransaction, user.getUserName());
         Assertions.assertNotNull(newTrans.getId());
     }

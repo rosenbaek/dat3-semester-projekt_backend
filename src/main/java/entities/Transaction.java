@@ -37,9 +37,6 @@ public class Transaction implements Serializable {
     private Integer units;
     @Column(name = "bought_price")
     private Double boughtPrice;
-    @JoinColumn(name = "currencies_code", referencedColumnName = "code")
-    @ManyToOne
-    private Currency currencyCode;
     @JoinColumn(name = "stocks_symbol", referencedColumnName = "symbol")
     @ManyToOne
     private Stock stockSymbol;
@@ -54,10 +51,9 @@ public class Transaction implements Serializable {
         this.id = id;
     }
 
-    public Transaction(Stock stock, int units, Currency currency, Double boughtPrice) {
+    public Transaction(Stock stock, int units, Double boughtPrice) {
         this.stockSymbol = stock;
         this.units = units;
-        this.currencyCode = currency;
         this.boughtPrice = boughtPrice;
     }
 
@@ -85,13 +81,7 @@ public class Transaction implements Serializable {
         this.boughtPrice = boughtPrice;
     }
 
-    public Currency getCurrenciesCode() {
-        return currencyCode;
-    }
-
-    public void setCurrenciesCode(Currency currenciesCode) {
-        this.currencyCode = currenciesCode;
-    }
+ 
 
     public Stock getStocksSymbol() {
         return stockSymbol;

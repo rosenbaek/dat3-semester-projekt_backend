@@ -72,7 +72,7 @@ public class StockResource {
         
         //Find currency i databasen
         //Hvis ikke findes, kast fejl.
-        Currency currency = stockFacade.getCurrencyFromDatabase(inputDTO.getCurrencyCode());
+        //Currency currency = stockFacade.getCurrencyFromDatabase(inputDTO.getCurrencyCode());
         
         //Tjek mod API om symbolet findes, hvis ikke - kast fejl.
             //Tjek om symbolet findes i stocks databasen
@@ -85,7 +85,7 @@ public class StockResource {
         List<Stock> stocks = stockFacade.getStockFromApi(symbols);
         Stock stock = stocks.get(0);
         
-        Transaction inputT = new Transaction(stock,inputDTO.getUnits(),currency,inputDTO.getBoughtPrice());
+        Transaction inputT = new Transaction(stock,inputDTO.getUnits(),inputDTO.getBoughtPrice());
         
         Transaction outputT = stockFacade.addTransaction(inputT, username);
         

@@ -37,10 +37,11 @@ public class Currency implements Serializable {
     private String code;
     @Column(name = "name")
     private String name;
-    @OneToMany(mappedBy = "currencyCode")
-    private List<Transaction> transactionList = new ArrayList<>();
+    @OneToMany(mappedBy = "currency")
+    private List<Stock> stockList = new ArrayList<>();
     @OneToMany(mappedBy = "currencyCode")
     private List<User> userList = new ArrayList<>();
+    
 
     public Currency() {
     }
@@ -67,14 +68,17 @@ public class Currency implements Serializable {
         this.name = name;
     }
 
-    @XmlTransient
-    public List<Transaction> getTransactionsList() {
-        return transactionList;
+    public List<Stock> getStockList() {
+        return stockList;
     }
 
-    public void setTransactionsList(List<Transaction> transactionsList) {
-        this.transactionList = transactionsList;
+    public void setStockList(List<Stock> stockList) {
+        this.stockList = stockList;
     }
+
+    
+
+    
 
     @XmlTransient
     public List<User> getUserList() {

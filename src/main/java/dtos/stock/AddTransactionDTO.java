@@ -16,7 +16,6 @@ public class AddTransactionDTO {
     private Integer units;
     private Double boughtPrice;
     private String stockSymbol;
-    private String currencyCode;
 
     public Integer getUnits() {
         return units;
@@ -30,10 +29,6 @@ public class AddTransactionDTO {
         return stockSymbol;
     }
 
-    public String getCurrencyCode() {
-        return currencyCode;
-    }
-
     public AddTransactionDTO(Transaction transaction) {
         if(transaction.getId() != null){
             this.id = transaction.getId();
@@ -41,7 +36,6 @@ public class AddTransactionDTO {
         this.units = transaction.getUnits();
         this.boughtPrice = transaction.getBoughtPrice();
         this.stockSymbol = transaction.getStocksSymbol().getSymbol();
-        this.currencyCode = transaction.getCurrenciesCode().getCode();
     }
     
     

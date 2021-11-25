@@ -14,6 +14,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -40,23 +42,28 @@ public class Stock implements Serializable {
     private String symbol;
     @Column(name = "name")
     private String name;
+
+    @JoinColumn(name = "currencies_code", referencedColumnName = "code")
+    @ManyToOne
+    private Currency currency;
     
+
     @Column(name = "current_price")
     private Double currentPrice;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_updated")
     private Date lastUpdated;
-    
+
     @OneToMany(mappedBy = "stockSymbol")
     private List<Transaction> transactionsList = new ArrayList<>();
 
     public Stock() {
     }
 
-   
-    public Stock(String symbol, String name, Double currentPrice) {
+    public Stock(String symbol, String name, Currency currency, Double currentPrice) {
         this.symbol = symbol;
         this.name = name;
+        this.currency = currency;
         this.currentPrice = currentPrice;
         this.lastUpdated = new Date();
     }
@@ -69,9 +76,12 @@ public class Stock implements Serializable {
         return lastUpdated;
     }
 
+    public Currency getCurrency() {
+        return currency;
+    }
+
    
 
-    
     public String getSymbol() {
         return symbol;
     }
@@ -121,5 +131,5 @@ public class Stock implements Serializable {
     public String toString() {
         return "entities.Stocks[ symbol=" + symbol + " ]";
     }
-    
+
 }

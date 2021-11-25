@@ -22,4 +22,8 @@ public class CurrencyDTO {
     
     
     
+    
+    public Currency getEntity() {
+        return new Currency(this.code, this.name);
+    }
 }

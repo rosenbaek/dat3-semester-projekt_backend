@@ -131,7 +131,13 @@ public class StockFacade {
             for (JsonElement jsonElement : jsonArray) {
                 StockDTO stockDTO = gson.fromJson(jsonElement, StockDTO.class);
                 
+                JsonObject element = jsonElement.getAsJsonObject();
+                String currencyCode = element.get("currency").getAsString();
+                
+                
                 em.getTransaction().begin();
+                Currency currency = em.find(Currency.class, currencyCode);
+                stockDTO.setCurrencyCode(currency);
                 Stock stock = em.merge(stockDTO.getEntity()); //We use merge instead of persist because merge returns the managed object
                 em.getTransaction().commit();
 
