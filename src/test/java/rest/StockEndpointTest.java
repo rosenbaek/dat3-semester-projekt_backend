@@ -94,10 +94,10 @@ public class StockEndpointTest {
             userRole = new Role("user");
             adminRole = new Role("admin");
             
-            s1 = new Stock("s1","test1 INC.");
-            s2 = new Stock("s2","test2 INC.");
-            s3 = new Stock("s3","test3 INC.");
-            s4 = new Stock("s4","test4 INC.");
+            s1 = new Stock("s1","test1 INC.",1000.0);
+            s2 = new Stock("s2","test2 INC.",2000.0);
+            s3 = new Stock("s3","test3 INC.",3000.0);
+            s4 = new Stock("s4","test4 INC.",4000.0);
          
             c1 = new Currency("code_c1","name_c1");
             c2 = new Currency("code_c2","name_c2");

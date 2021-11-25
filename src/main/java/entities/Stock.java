@@ -7,6 +7,7 @@ package entities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -17,6 +18,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -37,6 +40,13 @@ public class Stock implements Serializable {
     private String symbol;
     @Column(name = "name")
     private String name;
+    
+    @Column(name = "current_price")
+    private Double currentPrice;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "last_updated")
+    private Date lastUpdated;
+    
     @OneToMany(mappedBy = "stockSymbol")
     private List<Transaction> transactionsList = new ArrayList<>();
 
@@ -44,13 +54,24 @@ public class Stock implements Serializable {
     }
 
    
-    public Stock(String symbol, String name) {
+    public Stock(String symbol, String name, Double currentPrice) {
         this.symbol = symbol;
         this.name = name;
+        this.currentPrice = currentPrice;
+        this.lastUpdated = new Date();
+    }
+
+    public Double getCurrentPrice() {
+        return currentPrice;
+    }
+
+    public Date getLastUpdated() {
+        return lastUpdated;
     }
 
    
 
+    
     public String getSymbol() {
         return symbol;
     }

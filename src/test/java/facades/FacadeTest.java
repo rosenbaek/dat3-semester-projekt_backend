@@ -15,6 +15,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,10 +63,10 @@ public class FacadeTest {
             userRole = new Role("user");
             adminRole = new Role("admin");
             
-            s1 = new Stock("AAPL","Apple Inc.");
-            s2 = new Stock("s2","test2 INC.");
-            s3 = new Stock("s3","test3 INC.");
-            s4 = new Stock("s4","test4 INC.");
+            s1 = new Stock("AAPL","Apple Inc.",1000.0);
+            s2 = new Stock("s2","test2 INC.",2000.0);
+            s3 = new Stock("s3","test3 INC.",3000.0);
+            s4 = new Stock("s4","test4 INC.",4000.0);
          
             c1 = new Currency("code_c1","name_c1");
             c2 = new Currency("code_c2","name_c2");
@@ -158,11 +159,17 @@ public class FacadeTest {
     }
     
     @Test
-    public void testGetStockFromApi() throws IOException, API_Exception {
+    public void testGetStockFromApi_correctSymbol() throws IOException, API_Exception {
         EntityManager em = emf.createEntityManager();
         Stock stock = stockFacade.getStockFromApi("NAS.OL");
         Stock stockFromDB = em.find(Stock.class, "NAS.OL");
         assertEquals(stock.getSymbol(), stockFromDB.getSymbol());
+    }
+    
+    @Test
+    public void testGetStockFromApi_currentPrice() throws IOException, API_Exception {
+        Stock stock = stockFacade.getStockFromApi("NAS.OL");
+        Assertions.assertNotNull(stock.getCurrentPrice());     
     }
     
     @Test

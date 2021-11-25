@@ -34,8 +34,8 @@ public class SetupTestUsers {
     
     
     
-    Stock s1 = new Stock("AAPL","Apple Inc.");
-    Stock s2 = new Stock("TSLA","Tesla, Inc.");
+    Stock s1 = new Stock("AAPL","Apple Inc.",1000.0);
+    Stock s2 = new Stock("TSLA","Tesla, Inc.",2000.0);
     
     Transaction t1 = new Transaction(s1,100,c1,100.100);
     Transaction t2 = new Transaction(s2,200,c1,200.200);

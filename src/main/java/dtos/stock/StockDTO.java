@@ -6,6 +6,7 @@
 package dtos.stock;
 
 import entities.Stock;
+import java.util.Date;
 
 /**
  *
@@ -14,6 +15,8 @@ import entities.Stock;
 public class StockDTO {
     private String symbol;
     private String shortName;
+    private Double regularMarketPrice;
+    private Date lastUpdated;
 
     public String getSymbol() {
         return symbol;
@@ -24,12 +27,14 @@ public class StockDTO {
     }
     
     public Stock getEntity() {
-        return new Stock(symbol,shortName);
+        return new Stock(symbol,shortName,regularMarketPrice);
     }
 
     public StockDTO(Stock stock) {
         this.symbol = stock.getSymbol();
         this.shortName = stock.getName();
+        this.regularMarketPrice = stock.getCurrentPrice();
+        this.lastUpdated = stock.getLastUpdated();
     }
     
     
