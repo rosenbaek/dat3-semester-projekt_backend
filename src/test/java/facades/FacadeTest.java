@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import utils.Utility;
 
 //Uncomment the line below, to temporarily disable this test
 //@Disabled
@@ -200,6 +201,14 @@ public class FacadeTest {
         User userFromDB = stockFacade.getUserData(user.getUserName());
         assertEquals(userFromDB.getTransactionList().size(), user.getTransactionList().size());     
     }
+    
+    @Test
+    public void User_totalPortFolioValue() throws IOException, API_Exception {
+        Double expected = (t1.getUnits()*s1.getCurrentPrice())+(t2.getUnits()*s2.getCurrentPrice());
+        Double actual = Utility.calcTotalPortFolioValue(user);
+        assertEquals(expected, actual);
+    }
+    
     
 
 }

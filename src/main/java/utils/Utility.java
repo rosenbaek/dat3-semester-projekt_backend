@@ -9,6 +9,8 @@ import java.util.Properties;
 import java.util.Set;
 import com.google.gson.*;
 import entities.Currency;
+import entities.Transaction;
+import entities.User;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -71,11 +73,15 @@ public class Utility {
         } finally {
             em.close();
         }
-        
     }
- 
-
-    public static void main(String[] args) throws IOException {
-        //populateCurrency();
+    
+    public static Double calcTotalPortFolioValue(User user){
+        Double result = 0.0;
+        for(Transaction t : user.getTransactionList()){
+            Double currentPrice = t.getStocksSymbol().getCurrentPrice();
+            int units = t.getUnits();
+            result = result + (currentPrice * units);
+        }
+        return result;
     }
 }
