@@ -9,6 +9,9 @@ import entities.Transaction;
 import entities.User;
 import errorhandling.API_Exception;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.AfterAll;
@@ -161,34 +164,40 @@ public class FacadeTest {
     @Test
     public void testGetStockFromApi_correctSymbol() throws IOException, API_Exception {
         EntityManager em = emf.createEntityManager();
-        Stock stock = stockFacade.getStockFromApi("NAS.OL");
+        List<String> symbols = new ArrayList<>();
+        symbols.add("NAS.OL");
+        List<Stock> stocks = stockFacade.getStockFromApi(symbols);
         Stock stockFromDB = em.find(Stock.class, "NAS.OL");
-        assertEquals(stock.getSymbol(), stockFromDB.getSymbol());
+        assertEquals(stocks.get(0).getSymbol(), stockFromDB.getSymbol());
     }
     
     @Test
     public void testGetStockFromApi_currentPrice() throws IOException, API_Exception {
-        Stock stock = stockFacade.getStockFromApi("NAS.OL");
-        Assertions.assertNotNull(stock.getCurrentPrice());     
+        List<String> symbols = new ArrayList<>();
+        symbols.add("NAS.OL");
+        List<Stock> stocks = stockFacade.getStockFromApi(symbols);
+        Assertions.assertNotNull(stocks.get(0).getCurrentPrice());     
     }
     
     @Test
     public void testGetStockFromApiWrongSymbol() {
+        List<String> symbols = new ArrayList<>();
+        symbols.add("FAIL_SYMBOL");
         API_Exception error = Assertions.assertThrows(API_Exception.class, () -> {
-            stockFacade.getStockFromApi("Fail_symbol");
+            stockFacade.getStockFromApi(symbols);
         });
         assertEquals("Stock symbol not found", error.getMessage());
     }
     
     @Test
-    public void testGetUser_username() {
-        User userFromDB = stockFacade.getUser(user.getUserName());
+    public void testGetUser_username() throws IOException, API_Exception {
+        User userFromDB = stockFacade.getUserData(user.getUserName());
         assertEquals(userFromDB.getUserName(), user.getUserName());     
     }
     
     @Test
-    public void testGetUser_transactionsSize() {
-        User userFromDB = stockFacade.getUser(user.getUserName());
+    public void testGetUser_transactionsSize() throws IOException, API_Exception {
+        User userFromDB = stockFacade.getUserData(user.getUserName());
         assertEquals(userFromDB.getTransactionList().size(), user.getTransactionList().size());     
     }
     

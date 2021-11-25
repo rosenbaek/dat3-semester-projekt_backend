@@ -11,6 +11,8 @@ import entities.User;
 import errorhandling.API_Exception;
 import facades.StockFacade;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
@@ -40,12 +42,15 @@ public class StockResource {
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     @RolesAllowed("user")
-    public Response getUserData() {
+    public Response getUserData() throws IOException, API_Exception {
         //get username from token
         String username = securityContext.getUserPrincipal().getName();
         
         //Get user from database
-        User user = stockFacade.getUser(username);
+        User user = stockFacade.getUserData(username);
+        
+        
+        
         UserDTO userDTO = new UserDTO(user);
         //return userDTO
         return Response.ok().entity(gson.toJson(userDTO)).build();
@@ -69,7 +74,13 @@ public class StockResource {
         //Tjek mod API om symbolet findes, hvis ikke - kast fejl.
             //Tjek om symbolet findes i stocks databasen
             //Opdater prisen hvis den gør, opret hvis ikke.
-        Stock stock = stockFacade.getStockFromApi(inputDTO.getStockSymbol());
+            
+        //Following 4 lines is made to make sure we only use 1 external API call for fetching prices for multiple stocks.
+        //See more in getStockFromAPI method.
+        List<String> symbols = new ArrayList<>();
+        symbols.add(inputDTO.getStockSymbol());
+        List<Stock> stocks = stockFacade.getStockFromApi(symbols);
+        Stock stock = stocks.get(0);
         
         Transaction inputT = new Transaction(stock,inputDTO.getUnits(),currency,inputDTO.getBoughtPrice());
         

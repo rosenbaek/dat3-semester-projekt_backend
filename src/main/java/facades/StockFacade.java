@@ -18,7 +18,10 @@ import entities.User;
 import errorhandling.API_Exception;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.MINUTES;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import security.errorhandling.AuthenticationException;
@@ -38,11 +41,31 @@ public class StockFacade {
     }
 
     
-    public User getUser(String username) {
+    public User getUserData(String username) throws IOException, API_Exception {
         EntityManager em = emf.createEntityManager();
         User user;
         try {
             user = em.find(User.class, username);
+            List<String> symbolsToBeUpdated = new ArrayList<>();
+            //loop through transactions
+            user.getTransactionList().forEach(t->{
+                long MAX_DURATION = MILLISECONDS.convert(5, MINUTES);
+
+                Date now = new Date();
+                Date previous = t.getStocksSymbol().getLastUpdated();
+                long duration = now.getTime() - previous.getTime();
+
+                if (duration >= MAX_DURATION) {
+                    //tilføj symbol til liste
+                    symbolsToBeUpdated.add(t.getStocksSymbol().getSymbol());
+                }
+            });
+            
+            //opdater hvis der er nogle symboler der skal opdateres.
+            if(symbolsToBeUpdated.size() > 0){
+                getStockFromApi(symbolsToBeUpdated);
+            }
+            
         } finally {
             em.close();
         }
@@ -86,9 +109,11 @@ public class StockFacade {
         }
     }
     
-    public Stock getStockFromApi(String symbol) throws IOException, API_Exception{
+    public List<Stock> getStockFromApi(List<String> symbols) throws IOException, API_Exception{
         EntityManager em = emf.createEntityManager();
-        String URL = "https://stock-data-yahoo-finance-alternative.p.rapidapi.com/v6/finance/quote?symbols="+symbol;
+        StringBuilder finalSymbolsString = new StringBuilder();
+        symbols.forEach(x->finalSymbolsString.append(x+","));
+        String URL = "https://stock-data-yahoo-finance-alternative.p.rapidapi.com/v6/finance/quote?symbols="+finalSymbolsString;
         MakeOptions makeOptions = new MakeOptions("GET");
         makeOptions.addHeaders("X-RapidAPI-Host", "stock-data-yahoo-finance-alternative.p.rapidapi.com");
         makeOptions.addHeaders("X-RapidAPI-Key", "69a80a6d47msh72db9b5d84026b3p151955jsnd1872b4c005c");
@@ -100,7 +125,7 @@ public class StockFacade {
         JsonObject object1 = gson.fromJson(object.get("quoteResponse"), JsonObject.class);
         JsonArray jsonArray = gson.fromJson(object1.get("result"), JsonArray.class);
         
-        List<Stock> dtos = new ArrayList<>();
+        List<Stock> stocks = new ArrayList<>();
         
         if (jsonArray.size() > 0) {
             for (JsonElement jsonElement : jsonArray) {
@@ -110,13 +135,13 @@ public class StockFacade {
                 Stock stock = em.merge(stockDTO.getEntity()); //We use merge instead of persist because merge returns the managed object
                 em.getTransaction().commit();
 
-                dtos.add(stock);
+                stocks.add(stock);
             }
         } else {
             throw new API_Exception("Stock symbol not found");
         }
         
-        return dtos.get(0);
+        return stocks;
     }
     
     
