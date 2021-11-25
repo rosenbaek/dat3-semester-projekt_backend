@@ -47,23 +47,34 @@ public class StockFacade {
         try {
             user = em.find(User.class, username);
             List<String> symbolsToBeUpdated = new ArrayList<>();
+            List<String> currenciesToBeUpdated = new ArrayList<>();
             //loop through transactions
             user.getTransactionList().forEach(t->{
                 long MAX_DURATION = MILLISECONDS.convert(5, MINUTES);
 
                 Date now = new Date();
-                Date previous = t.getStocksSymbol().getLastUpdated();
-                long duration = now.getTime() - previous.getTime();
+                Date previousStock = t.getStocksSymbol().getLastUpdated();
+                Date previousCurrency = t.getStocksSymbol().getCurrency().getLastUpdated();
+                long durationStock = now.getTime() - previousStock.getTime();
+                long durationCurrency = now.getTime() - previousCurrency.getTime();
 
-                if (duration >= MAX_DURATION) {
+                if (durationStock >= MAX_DURATION) {
                     //tilføj symbol til liste
                     symbolsToBeUpdated.add(t.getStocksSymbol().getSymbol());
+                }
+                if (durationCurrency >= MAX_DURATION) {
+                    //tilføj Currency til liste
+                    currenciesToBeUpdated.add(t.getStocksSymbol().getCurrency().getCode());
                 }
             });
             
             //opdater hvis der er nogle symboler der skal opdateres.
             if(symbolsToBeUpdated.size() > 0){
                 getStockFromApi(symbolsToBeUpdated);
+            }
+            if (currenciesToBeUpdated.size() > 0) {
+                //Update currencies from api with regard to DKK
+                updateCurrenciesFromApi(currenciesToBeUpdated);
             }
             
         } finally {
@@ -94,6 +105,10 @@ public class StockFacade {
         } finally {
             em.close();
         }
+    }
+    
+    public void updateCurrenciesFromApi(List<String> currencyCodes){
+    
     }
     
     public Currency getCurrencyFromDatabase(String currencyCode) throws API_Exception{
