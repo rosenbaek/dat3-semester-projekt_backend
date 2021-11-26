@@ -63,6 +63,11 @@ public class Currency implements Serializable {
         return lastUpdated;
     }
 
+    public void setValue(Double value) {
+        this.value = value;
+        this.lastUpdated = new Date();
+    }
+
 
     public String getCode() {
         return code;

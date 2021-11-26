@@ -19,9 +19,13 @@ import errorhandling.API_Exception;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import security.errorhandling.AuthenticationException;
@@ -74,7 +78,7 @@ public class StockFacade {
             }
             if (currenciesToBeUpdated.size() > 0) {
                 //Update currencies from api with regard to DKK
-                updateCurrenciesFromApi(currenciesToBeUpdated);
+                updateCurrenciesFromApi();
             }
             
         } finally {
@@ -107,7 +111,30 @@ public class StockFacade {
         }
     }
     
-    public void updateCurrenciesFromApi(List<String> currencyCodes){
+    public void updateCurrenciesFromApi() throws IOException{
+        EntityManager em = emf.createEntityManager();
+        String URL = "https://freecurrencyapi.net/api/v2/latest?apikey=23d576e0-4e8a-11ec-a99d-f5d85080afeb";
+        MakeOptions makeOptions = new MakeOptions("GET");
+
+        String res = Utility.fetchData(URL, makeOptions);
+        
+        try {
+            JsonObject object = gson.fromJson(res, JsonObject.class);
+            JsonObject data = gson.fromJson(object.get("data"), JsonObject.class);
+
+            
+            for (Map.Entry<String, JsonElement> entry : data.entrySet()) {
+                em.getTransaction().begin();
+                    System.out.println("Test: " + entry.getValue().getAsDouble());
+                    Currency currency = em.find(Currency.class, entry.getKey());
+                    currency.setValue(entry.getValue().getAsDouble());
+                em.getTransaction().commit();
+            }
+            
+        } catch (Exception e) {
+            System.out.println("Error: "+ e.getMessage());
+        }
+        
     
     }
     
@@ -165,5 +192,5 @@ public class StockFacade {
         return stocks;
     }
     
-    
+   
 }
