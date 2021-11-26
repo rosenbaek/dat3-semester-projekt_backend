@@ -19,16 +19,12 @@ import errorhandling.API_Exception;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import security.errorhandling.AuthenticationException;
 import utils.Utility;
 import utils.api.MakeOptions;
 
@@ -121,16 +117,12 @@ public class StockFacade {
         try {
             JsonObject object = gson.fromJson(res, JsonObject.class);
             JsonObject data = gson.fromJson(object.get("data"), JsonObject.class);
-
-            
             for (Map.Entry<String, JsonElement> entry : data.entrySet()) {
                 em.getTransaction().begin();
-                    System.out.println("Test: " + entry.getValue().getAsDouble());
                     Currency currency = em.find(Currency.class, entry.getKey());
                     currency.setValue(entry.getValue().getAsDouble());
                 em.getTransaction().commit();
             }
-            
         } catch (Exception e) {
             System.out.println("Error: "+ e.getMessage());
         }

@@ -82,11 +82,12 @@ public class Utility {
         
         for(Transaction t : user.getTransactionList()){
             Double currentPrice = t.getStocksSymbol().getCurrentPrice();
-            //convert to base currency
+            
             String stockCurrencyCode = t.getStocksSymbol().getCurrency().getCode();
-            if (!stockCurrencyCode.equals("usd")&&t.getStocksSymbol().getCurrency().getValue() > 0.0) {
-                Double newVal = (currentPrice/t.getStocksSymbol().getCurrency().getValue());
-               currentPrice = newVal;
+            Double stockCurrencyValue = t.getStocksSymbol().getCurrency().getValue();
+            //convert to base currency
+            if (!stockCurrencyCode.equals("usd") && stockCurrencyValue > 0.0) {    
+                currentPrice = (currentPrice / stockCurrencyValue);
             }
             
             int units = t.getUnits();
@@ -95,8 +96,7 @@ public class Utility {
         
         //convert to userPreferredCurrency
         if (!userPreferredCurrency.getCode().equals("usd")) {
-            Double newVal1 = (result * userPreferredCurrency.getValue());
-            result = newVal1;
+            result = (result * userPreferredCurrency.getValue());
         }
         return result;
     }
