@@ -77,10 +77,26 @@ public class Utility {
     
     public static Double calcTotalPortFolioValue(User user){
         Double result = 0.0;
+        //Database base currency is USD!!!!!!
+        Currency userPreferredCurrency = user.getCurrencyCode();
+        
         for(Transaction t : user.getTransactionList()){
             Double currentPrice = t.getStocksSymbol().getCurrentPrice();
+            //convert to base currency
+            String stockCurrencyCode = t.getStocksSymbol().getCurrency().getCode();
+            if (!stockCurrencyCode.equals("usd")&&t.getStocksSymbol().getCurrency().getValue() > 0.0) {
+                Double newVal = (currentPrice/t.getStocksSymbol().getCurrency().getValue());
+               currentPrice = newVal;
+            }
+            
             int units = t.getUnits();
-            result = result + (currentPrice * units);
+            result = result + (currentPrice * units); 
+        }
+        
+        //convert to userPreferredCurrency
+        if (!userPreferredCurrency.getCode().equals("usd")) {
+            Double newVal1 = (result * userPreferredCurrency.getValue());
+            result = newVal1;
         }
         return result;
     }
