@@ -62,7 +62,8 @@ public class StockFacade {
                     //tilføj symbol til liste
                     symbolsToBeUpdated.add(t.getStocksSymbol().getSymbol());
                 }
-                if (durationCurrency >= MAX_DURATION) {
+                //USD will never be updated since it's the base currency in db. therefore we check below
+                if (durationCurrency >= MAX_DURATION && !t.getStocksSymbol().getCurrency().getCode().equals("usd") ) {
                     //tilføj Currency til liste
                     currenciesToBeUpdated.add(t.getStocksSymbol().getCurrency().getCode());
                 }
