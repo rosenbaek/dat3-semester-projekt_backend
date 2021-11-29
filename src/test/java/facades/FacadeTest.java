@@ -2,6 +2,7 @@ package facades;
 
 
 import entities.Currency;
+import entities.PortfolioValue;
 import utils.EMF_Creator;
 import entities.Role;
 import entities.Stock;
@@ -10,6 +11,7 @@ import entities.User;
 import errorhandling.API_Exception;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -31,6 +33,7 @@ public class FacadeTest {
     private static Stock s1,s2,s3,s4;
     private static Currency c1,c2,c3,c4;
     private static Transaction t1,t2,t3,t4;
+    private static PortfolioValue pfv1,pfv2,pfv3,pfv4;
     
 
     public FacadeTest() {
@@ -51,6 +54,7 @@ public class FacadeTest {
             em.getTransaction().begin();
             em.createNamedQuery("Transaction.deleteAllRows").executeUpdate();
             em.createNamedQuery("Stock.deleteAllRows").executeUpdate();
+            em.createNamedQuery("PortfolioValue.deleteAllRows").executeUpdate();
             em.createNamedQuery("User.deleteAllRows").executeUpdate();
             em.createNamedQuery("Currency.deleteAllRows").executeUpdate();
             em.createNamedQuery("Role.deleteAllRows").executeUpdate();
@@ -78,6 +82,25 @@ public class FacadeTest {
             t2 = new Transaction(s2,200,2000.2);
             t3 = new Transaction(s3,300,3000.3);
             t4 = new Transaction(s4,400,4000.4);
+            
+            pfv1 = new PortfolioValue(10000.0);
+            pfv2 = new PortfolioValue(10000.0);
+            pfv3 = new PortfolioValue(10000.0);
+            pfv4 = new PortfolioValue(10000.0);
+            //new date Hacked
+            Date date1 = new Date(System.currentTimeMillis()-4*24*60*60*1000);
+            Date date2 = new Date(System.currentTimeMillis()-3*24*60*60*1000);
+            Date date3 = new Date(System.currentTimeMillis()-2*24*60*60*1000);
+            Date date4 = new Date(System.currentTimeMillis()-1*24*60*60*1000);
+            pfv1.setDate(date1);
+            pfv2.setDate(date2);
+            pfv3.setDate(date3);
+            pfv4.setDate(date4);
+            
+            user.addHistoricalPortfolioValue(pfv1);
+            user.addHistoricalPortfolioValue(pfv2);
+            user.addHistoricalPortfolioValue(pfv3);
+            user.addHistoricalPortfolioValue(pfv4);
  
             user.addRole(userRole);
             admin.addRole(adminRole);
@@ -113,6 +136,11 @@ public class FacadeTest {
             em.persist(t2);
             em.persist(t3);
             em.persist(t4);
+            
+            em.persist(pfv1);
+            em.persist(pfv2);
+            em.persist(pfv3);
+            em.persist(pfv4);
             em.getTransaction().commit();
             
         } finally {
@@ -205,6 +233,10 @@ public class FacadeTest {
         Double actual = Utility.calcTotalPortFolioValue(user);
         assertEquals(expected, actual);
     }
+    
+    
+    
+    
     
     
 

@@ -29,17 +29,22 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Transaction implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
+    
     @Column(name = "units")
     private Integer units;
+    
     @Column(name = "bought_price")
     private Double boughtPrice;
+    
     @JoinColumn(name = "stocks_symbol", referencedColumnName = "symbol")
     @ManyToOne
     private Stock stockSymbol;
+    
     @JoinColumn(name = "users_user_name", referencedColumnName = "user_name")
     @ManyToOne
     private User user;
