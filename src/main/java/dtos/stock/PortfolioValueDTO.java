@@ -5,6 +5,8 @@
 package dtos.stock;
 
 import entities.PortfolioValue;
+import java.text.DateFormat;
+import java.util.Date;
 
 /**
  *
@@ -12,25 +14,29 @@ import entities.PortfolioValue;
  */
 public class PortfolioValueDTO {
     private Integer id;
-    private String date;
+    private Date date;
     private Double value;
 
     public PortfolioValueDTO(PortfolioValue pfv) {
         if(pfv.getId() != null){
             this.id = pfv.getId();
         }
-        this.date = pfv.getDate().toString();
+        this.date = pfv.getDate();
+        this.date.setHours(1);
         this.value = pfv.getValue();
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
+   
+
+    
     public Double getValue() {
         return value;
     }

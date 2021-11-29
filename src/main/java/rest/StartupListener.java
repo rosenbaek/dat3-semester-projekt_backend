@@ -58,7 +58,7 @@ public class StartupListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent event) {
         stockFacade = StockFacade.getStockFacade(EMF);
         sched = Executors.newSingleThreadScheduledExecutor();
-        sched.scheduleAtFixedRate(task2, 0, 3, TimeUnit.MINUTES);
+        sched.scheduleAtFixedRate(task2, 0, 2, TimeUnit.MINUTES);
     }
 
     @Override

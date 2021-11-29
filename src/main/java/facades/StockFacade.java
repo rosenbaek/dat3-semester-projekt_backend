@@ -99,6 +99,14 @@ public class StockFacade {
         return usernames;
     }
     
+    public boolean TimeStampAreOnSameDay(Date d1,Date d2) {  
+        if (d1.getYear() == d2.getYear()
+            && d1.getMonth() == d2.getMonth()
+            && d1.getDate() == d2.getDate()) {
+            return true;
+        }
+        return false;
+    }
     
     public void addPortfolioValueHistory(String username) {
         EntityManager em = emf.createEntityManager();
@@ -107,8 +115,18 @@ public class StockFacade {
             User user = em.find(User.class,username);
             Double totalPortFolioValue = Utility.calcTotalPortFolioValue(user);
             PortfolioValue tpfv = new PortfolioValue(totalPortFolioValue);
-            user.addHistoricalPortfolioValue(tpfv);
-            em.persist(tpfv);
+            boolean check = true;
+            for (PortfolioValue val : user.getHistoricalPortfolioValues()) {
+                if (TimeStampAreOnSameDay(val.getDate(), new Date())) {
+                   check = false;
+                }
+            }
+            
+            if (check) {
+                user.addHistoricalPortfolioValue(tpfv);
+                em.persist(tpfv); 
+            }
+            
             em.getTransaction().commit();
         } finally {
             em.close();
