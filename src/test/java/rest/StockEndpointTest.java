@@ -84,6 +84,7 @@ public class StockEndpointTest {
             em.getTransaction().begin();
             em.createNamedQuery("Transaction.deleteAllRows").executeUpdate();
             em.createNamedQuery("Stock.deleteAllRows").executeUpdate();
+            em.createNamedQuery("PortfolioValue.deleteAllRows").executeUpdate();
             em.createNamedQuery("User.deleteAllRows").executeUpdate();
             em.createNamedQuery("Currency.deleteAllRows").executeUpdate();
             em.createNamedQuery("Role.deleteAllRows").executeUpdate();

@@ -12,6 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dtos.stock.StockDTO;
 import entities.Currency;
+import entities.PortfolioValue;
 import entities.Stock;
 import entities.Transaction;
 import entities.User;
@@ -25,6 +26,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
 import utils.Utility;
 import utils.api.MakeOptions;
 
@@ -85,6 +87,34 @@ public class StockFacade {
     }
     
     
+    public List<String> getAllUserNames(){
+        List<String> usernames;
+        EntityManager em = emf.createEntityManager();
+        try{
+            TypedQuery<String> query = em.createQuery("SELECT u.userName from User u", String.class);
+            usernames = query.getResultList();
+        } finally{
+            em.close();
+        }
+        return usernames;
+    }
+    
+    
+    public void addPortfolioValueHistory(String username) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            User user = em.find(User.class,username);
+            Double totalPortFolioValue = Utility.calcTotalPortFolioValue(user);
+            PortfolioValue tpfv = new PortfolioValue(totalPortFolioValue);
+            user.addHistoricalPortfolioValue(tpfv);
+            em.persist(tpfv);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
+    
     public static StockFacade getStockFacade(EntityManagerFactory _emf) {
         if (instance == null) {
             emf = _emf;
@@ -104,6 +134,18 @@ public class StockFacade {
             em.getTransaction().commit();
             return t;
         } finally {
+            em.close();
+        }
+    }
+    
+    public List<String> getAllStockSymbols(){
+        EntityManager em = emf.createEntityManager();
+        try{
+            List<String> symbols;
+            TypedQuery<String> query = em.createQuery("SELECT s.symbol from Stock s",String.class);
+            symbols = query.getResultList();
+            return symbols;
+        } finally{
             em.close();
         }
     }

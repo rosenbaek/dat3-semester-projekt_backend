@@ -234,6 +234,30 @@ public class FacadeTest {
         assertEquals(expected, actual);
     }
     
+    @Test
+    public void testGetAllStockSymbols() {
+        int expected = 4;
+        List<String> symbols = stockFacade.getAllStockSymbols();
+        assertEquals(expected, symbols.size());
+        
+    }
+    
+    @Test
+    public void testGetAllUserNames() {
+        int expected = 3;
+        List<String> userNames = stockFacade.getAllUserNames();
+        assertEquals(expected, userNames.size());
+        
+    }
+    
+    @Test
+    public void testAddPortFolioValueHistory() {
+        int expected = user.getHistoricalPortfolioValues().size()+1;
+        stockFacade.addPortfolioValueHistory(user.getUserName());
+        EntityManager em = emf.createEntityManager();
+        User newUser = em.find(User.class, user.getUserName());
+        assertEquals(expected, newUser.getHistoricalPortfolioValues().size());
+    }
     
     
     
