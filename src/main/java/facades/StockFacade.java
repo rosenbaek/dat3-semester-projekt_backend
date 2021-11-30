@@ -240,7 +240,7 @@ public class StockFacade {
     
     
     public List<NewsDTO> getNewsFromApi() throws IOException, API_Exception {
-        String URL = "https://seeking-alpha.p.rapidapi.com/news/v2/list?category=market-news::stocks&size=3";
+        String URL = "https://seeking-alpha.p.rapidapi.com/news/v2/list?category=market-news::stocks&size=4";
         MakeOptions makeOptions = new MakeOptions("GET");
         makeOptions.addHeaders("X-RapidAPI-Host", "seeking-alpha.p.rapidapi.com");
         makeOptions.addHeaders("X-RapidAPI-Key", "69a80a6d47msh72db9b5d84026b3p151955jsnd1872b4c005c");

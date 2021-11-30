@@ -297,6 +297,6 @@ public class StockEndpointTest {
                 .when().get("/stock")
                 .then()
                 .statusCode(200)
-                .body("news", hasSize(3));
+                .body("news", hasSize(4));
     }
 }

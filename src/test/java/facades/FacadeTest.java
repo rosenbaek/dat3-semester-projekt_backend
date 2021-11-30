@@ -263,7 +263,7 @@ public class FacadeTest {
     
     //@Test
     public void testNewsFromAPI() throws IOException, API_Exception {
-        int expected = 3;
+        int expected = 4;
         List<NewsDTO> newsDTOs = stockFacade.getNewsFromApi();
         assertEquals(expected, newsDTOs.size());
     }  
