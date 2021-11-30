@@ -16,7 +16,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import javax.persistence.EntityManager;
@@ -95,9 +99,15 @@ public class Utility {
         }
         
         //convert to userPreferredCurrency
-        if (!userPreferredCurrency.getCode().equals("usd")) {
+        if (!userPreferredCurrency.getCode().equals("usd") && userPreferredCurrency.getValue() > 0.0) {
             result = (result * userPreferredCurrency.getValue());
         }
         return result;
     }
+    
+    public static boolean isSameDay(Date date1, Date date2) {
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
+        return fmt.format(date1).equals(fmt.format(date2));
+    }
+    
 }

@@ -27,8 +27,7 @@ public class StartupListener implements ServletContextListener {
     private ScheduledExecutorService sched;
     private StockFacade stockFacade;
 
-    Runnable task2 = () -> {
-        System.out.println("Task #2 is running"); 
+    Runnable updatePortfolioValuesRunnable = () -> {
         //Opdater alle currencies
         try{
             //Updates all currency values towards system default value
@@ -58,7 +57,7 @@ public class StartupListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent event) {
         stockFacade = StockFacade.getStockFacade(EMF);
         sched = Executors.newSingleThreadScheduledExecutor();
-        sched.scheduleAtFixedRate(task2, 0, 2, TimeUnit.MINUTES);
+        sched.scheduleAtFixedRate(updatePortfolioValuesRunnable, 0, 11, TimeUnit.HOURS);
     }
 
     @Override

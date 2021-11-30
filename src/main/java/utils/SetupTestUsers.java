@@ -30,16 +30,16 @@ public class SetupTestUsers {
     User admin = new User("admin", "testAdmin");
     User both = new User("user_admin", "testBoth");
 
-    Currency c1 = em.find(Currency.class,"dkk");
+    Currency c1 = em.find(Currency.class,"usd");
     
     
     
-    Stock s1 = new Stock("AAPL","Apple Inc.",c1,1000.0);
-    Stock s2 = new Stock("TSLA","Tesla, Inc.",c1,2000.0);
+    Stock s1 = new Stock("AAPL","Apple Inc.",c1,160.24);
+    Stock s2 = new Stock("TSLA","Tesla, Inc.",c1,1136.0);
     
-    Transaction t1 = new Transaction(s1,100,100.100);
-    Transaction t2 = new Transaction(s2,200,200.200);
-    Transaction t3 = new Transaction(s2,10000,10000.10000);
+    Transaction t1 = new Transaction(s1,10,160.10);
+    Transaction t2 = new Transaction(s2,20,1136.20);
+    Transaction t3 = new Transaction(s2,10,1136.10);
     
     
     

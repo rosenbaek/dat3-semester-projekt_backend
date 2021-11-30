@@ -2,6 +2,7 @@ package rest;
 
 import com.google.gson.JsonObject;
 import entities.Currency;
+import entities.PortfolioValue;
 import entities.User;
 import entities.Role;
 import entities.Stock;
@@ -10,9 +11,9 @@ import facades.StockFacade;
 
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
-import io.restassured.http.ContentType;
 import io.restassured.parsing.Parser;
 import java.net.URI;
+import java.util.Date;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.core.UriBuilder;
@@ -22,12 +23,9 @@ import org.glassfish.jersey.server.ResourceConfig;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import utils.EMF_Creator;
 
@@ -46,6 +44,7 @@ public class StockEndpointTest {
     private static Stock s1,s2,s3,s4;
     private static Currency c1,c2,c3,c4;
     private static Transaction t1,t2,t3,t4;
+    private static PortfolioValue pfv1, pfv2, pfv3, pfv4;
     
     static HttpServer startServer() {
         ResourceConfig rc = ResourceConfig.forApplication(new ApplicationConfig());
@@ -112,6 +111,30 @@ public class StockEndpointTest {
             t2 = new Transaction(s2,200,2000.2);
             t3 = new Transaction(s3,300,3000.3);
             t4 = new Transaction(s4,400,4000.4);
+            
+            t1 = new Transaction(s1, 100, 1000.1);
+            t2 = new Transaction(s2, 200, 2000.2);
+            t3 = new Transaction(s3, 300, 3000.3);
+            t4 = new Transaction(s4, 400, 4000.4);
+
+            pfv1 = new PortfolioValue(10000.0);
+            pfv2 = new PortfolioValue(10000.0);
+            pfv3 = new PortfolioValue(10000.0);
+            pfv4 = new PortfolioValue(10000.0);
+            //new date Hacked
+            Date date1 = new Date(System.currentTimeMillis() - 4 * 24 * 60 * 60 * 1000);
+            Date date2 = new Date(System.currentTimeMillis() - 3 * 24 * 60 * 60 * 1000);
+            Date date3 = new Date(System.currentTimeMillis() - 2 * 24 * 60 * 60 * 1000);
+            Date date4 = new Date(System.currentTimeMillis() - 1 * 24 * 60 * 60 * 1000);
+            pfv1.setDate(date1);
+            pfv2.setDate(date2);
+            pfv3.setDate(date3);
+            pfv4.setDate(date4);
+            
+            user.addHistoricalPortfolioValue(pfv1);
+            user.addHistoricalPortfolioValue(pfv2);
+            user.addHistoricalPortfolioValue(pfv3);
+            user.addHistoricalPortfolioValue(pfv4);
  
             user.addRole(userRole);
             admin.addRole(adminRole);
@@ -147,6 +170,11 @@ public class StockEndpointTest {
             em.persist(t2);
             em.persist(t3);
             em.persist(t4);
+            
+            em.persist(pfv1);
+            em.persist(pfv2);
+            em.persist(pfv3);
+            em.persist(pfv4);
             em.getTransaction().commit();
             
         } finally {
@@ -236,7 +264,7 @@ public class StockEndpointTest {
                 .body("transactions", hasSize(2)); 
     }
     
-    //@Test
+    @Test
     public void testGetUser_totalPortFolioValue() {
         login(user.getUserName(), "testUser");
         given()
@@ -245,6 +273,18 @@ public class StockEndpointTest {
                 .when().get("/stock")
                 .then()
                 .statusCode(200)
-                .body("totalPortfolioValue", equalTo(500000.0)); 
+                .body("totalPortfolioValue", equalTo(500000.0f)); //f is added as json returns a float and NOT a double
+    }
+    
+    @Test
+    public void testGetUser_totalHistoricalPortFolioValue() {
+        login(user.getUserName(), "testUser");
+        given()
+                .contentType("application/json")
+                .header("x-access-token", securityToken)
+                .when().get("/stock")
+                .then()
+                .statusCode(200)
+                .body("historicalPortFolioValue", hasSize(4)); 
     }
 }

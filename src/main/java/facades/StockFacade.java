@@ -18,6 +18,7 @@ import entities.Transaction;
 import entities.User;
 import errorhandling.API_Exception;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -99,15 +100,6 @@ public class StockFacade {
         return usernames;
     }
     
-    public boolean TimeStampAreOnSameDay(Date d1,Date d2) {  
-        if (d1.getYear() == d2.getYear()
-            && d1.getMonth() == d2.getMonth()
-            && d1.getDate() == d2.getDate()) {
-            return true;
-        }
-        return false;
-    }
-    
     public void addPortfolioValueHistory(String username) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -115,14 +107,15 @@ public class StockFacade {
             User user = em.find(User.class,username);
             Double totalPortFolioValue = Utility.calcTotalPortFolioValue(user);
             PortfolioValue tpfv = new PortfolioValue(totalPortFolioValue);
-            boolean check = true;
+            
+            boolean persist = true;
             for (PortfolioValue val : user.getHistoricalPortfolioValues()) {
-                if (TimeStampAreOnSameDay(val.getDate(), new Date())) {
-                   check = false;
+                if (Utility.isSameDay(val.getDate(), new Date())) {
+                   persist = false;
                 }
             }
             
-            if (check) {
+            if (persist) {
                 user.addHistoricalPortfolioValue(tpfv);
                 em.persist(tpfv); 
             }

@@ -1,11 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dtos.stock;
 
 import entities.PortfolioValue;
-import java.text.DateFormat;
 import java.util.Date;
 
 /**
@@ -22,7 +17,7 @@ public class PortfolioValueDTO {
             this.id = pfv.getId();
         }
         this.date = pfv.getDate();
-        this.date.setHours(1);
+        this.date.setHours(1); //to make sure that time is not 00:00 otherwise confusion if which day it is
         this.value = pfv.getValue();
     }
 
@@ -34,9 +29,6 @@ public class PortfolioValueDTO {
         this.date = date;
     }
 
-   
-
-    
     public Double getValue() {
         return value;
     }
