@@ -10,6 +10,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dtos.stock.NewsDTO;
 import dtos.stock.StockDTO;
 import entities.Currency;
 import entities.PortfolioValue;
@@ -180,9 +181,8 @@ public class StockFacade {
         } catch (Exception e) {
             System.out.println("Error: "+ e.getMessage());
         }
-        
-    
     }
+    
     
     public Currency getCurrencyFromDatabase(String currencyCode) throws API_Exception{
         EntityManager em = emf.createEntityManager();
@@ -238,5 +238,37 @@ public class StockFacade {
         return stocks;
     }
     
+    
+    public List<NewsDTO> getNewsFromApi() throws IOException, API_Exception {
+        String URL = "https://seeking-alpha.p.rapidapi.com/news/v2/list?category=market-news::stocks&size=3";
+        MakeOptions makeOptions = new MakeOptions("GET");
+        makeOptions.addHeaders("X-RapidAPI-Host", "seeking-alpha.p.rapidapi.com");
+        makeOptions.addHeaders("X-RapidAPI-Key", "69a80a6d47msh72db9b5d84026b3p151955jsnd1872b4c005c");
+        makeOptions.addHeaders("Accept", "application/json");
+        
+
+        String res = Utility.fetchData(URL, makeOptions);
+
+        JsonObject object = gson.fromJson(res, JsonObject.class);
+        JsonArray jsonArray = gson.fromJson(object.get("data"), JsonArray.class);
+
+        List<NewsDTO> newsDTOs = new ArrayList<>();
+
+        if (jsonArray.size() > 0) {
+            for (JsonElement jsonElement : jsonArray) {
+                JsonObject objectFromElement = jsonElement.getAsJsonObject();
+                String title = objectFromElement.get("attributes").getAsJsonObject().get("title").getAsString();
+                String url = objectFromElement.get("links").getAsJsonObject().get("canonical").getAsString();
+                String urlImage = objectFromElement.get("links").getAsJsonObject().get("uriImage").getAsString();
+
+                NewsDTO newsDTO = new NewsDTO(title,url,urlImage);
+                newsDTOs.add(newsDTO);
+            }
+        } else {
+            throw new API_Exception("Error fetching news");
+        }
+
+        return newsDTOs;
+    }
    
 }

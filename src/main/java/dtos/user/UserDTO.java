@@ -7,6 +7,7 @@ package dtos.user;
 
 import dtos.stock.AddTransactionDTO;
 import dtos.stock.CurrencyDTO;
+import dtos.stock.NewsDTO;
 import dtos.stock.PortfolioValueDTO;
 import dtos.stock.TransactionDTO;
 import entities.User;
@@ -25,6 +26,7 @@ public class UserDTO {
     private String password;
     private List<RoleDTO> roles = new ArrayList<>();
     private List<TransactionDTO> transactions = new ArrayList<>();
+    private List<NewsDTO> news = new ArrayList<>();
     
     public UserDTO(User user) {
         this.username = user.getUserName();
@@ -37,6 +39,14 @@ public class UserDTO {
     }
 
     public UserDTO() {
+    }
+
+    public List<NewsDTO> getNewsDTOs() {
+        return news;
+    }
+
+    public void setNewsDTOs(List<NewsDTO> newsDTOs) {
+        this.news = newsDTOs;
     }
 
     

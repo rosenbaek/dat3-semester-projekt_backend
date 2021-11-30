@@ -1,6 +1,7 @@
 package facades;
 
 
+import dtos.stock.NewsDTO;
 import entities.Currency;
 import entities.PortfolioValue;
 import utils.EMF_Creator;
@@ -260,8 +261,11 @@ public class FacadeTest {
     }
     
     
-    
-    
-    
+    //@Test
+    public void testNewsFromAPI() throws IOException, API_Exception {
+        int expected = 3;
+        List<NewsDTO> newsDTOs = stockFacade.getNewsFromApi();
+        assertEquals(expected, newsDTOs.size());
+    }  
 
 }
