@@ -6,6 +6,8 @@
 package entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -48,6 +51,9 @@ public class Transaction implements Serializable {
     @JoinColumn(name = "users_user_name", referencedColumnName = "user_name")
     @ManyToOne
     private User user;
+    
+    @ManyToMany(mappedBy = "transactions")
+    private List<Group> groups = new ArrayList<>();
 
     public Transaction() {
     }
@@ -86,8 +92,33 @@ public class Transaction implements Serializable {
         this.boughtPrice = boughtPrice;
     }
 
+    public Stock getStockSymbol() {
+        return stockSymbol;
+    }
+
+    public void setStockSymbol(Stock stockSymbol) {
+        this.stockSymbol = stockSymbol;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public List<Group> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(List<Group> groups) {
+        this.groups = groups;
+    }
+
  
 
+    
     public Stock getStocksSymbol() {
         return stockSymbol;
     }

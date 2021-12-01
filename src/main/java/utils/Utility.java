@@ -79,12 +79,12 @@ public class Utility {
         }
     }
     
-    public static Double calcTotalPortFolioValue(User user){
+    public static Double calcTotalPortFolioValue(List<Transaction> transactions, Currency userPreferredCurrency){
         Double result = 0.0;
         //Database base currency is USD!!!!!!
-        Currency userPreferredCurrency = user.getCurrencyCode();
         
-        for(Transaction t : user.getTransactionList()){
+        
+        for(Transaction t : transactions){
             Double currentPrice = t.getStocksSymbol().getCurrentPrice();
             
             String stockCurrencyCode = t.getStocksSymbol().getCurrency().getCode();

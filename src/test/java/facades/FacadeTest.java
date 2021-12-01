@@ -56,7 +56,7 @@ public class FacadeTest {
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Transaction.deleteAllRows").executeUpdate();
-            //em.createNamedQuery("Group.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Group.deleteAllRows").executeUpdate();
             em.createNamedQuery("Stock.deleteAllRows").executeUpdate();
             em.createNamedQuery("PortfolioValue.deleteAllRows").executeUpdate();
             em.createNamedQuery("User.deleteAllRows").executeUpdate();
@@ -126,6 +126,11 @@ public class FacadeTest {
             user.addGroup(g2);
             user.addGroup(g3);
             both.addGroup(g4);
+            
+            g1.addTransaction(t1);
+            g1.addTransaction(t2);
+            g3.addTransaction(t1);
+            g3.addTransaction(t2);
            
             em.persist(userRole);
             em.persist(adminRole);
@@ -154,10 +159,10 @@ public class FacadeTest {
             em.persist(pfv3);
             em.persist(pfv4);
             
-            //em.persist(g1);
-            //em.persist(g2);
-            //em.persist(g3);
-            //em.persist(g4);
+            em.persist(g1);
+            em.persist(g2);
+            em.persist(g3);
+            em.persist(g4);
             em.getTransaction().commit();
             
         } finally {
@@ -247,7 +252,7 @@ public class FacadeTest {
     @Test
     public void User_totalPortFolioValue() throws IOException, API_Exception {
         Double expected = (t1.getUnits()*s1.getCurrentPrice())+(t2.getUnits()*s2.getCurrentPrice());
-        Double actual = Utility.calcTotalPortFolioValue(user);
+        Double actual = Utility.calcTotalPortFolioValue(user.getTransactionList(),user.getCurrencyCode());
         assertEquals(expected, actual);
     }
     
@@ -284,8 +289,11 @@ public class FacadeTest {
         assertEquals(expected, newsDTOs.size());
     }
     
-    //@Test
+    @Test
     public void testGetGroupsFromUser() {
+        EntityManager em = emf.createEntityManager();
+        Transaction transaction = em.find(Transaction.class, t1.getId());
+        assertEquals(2, transaction.getGroups().size());
         
     }
 

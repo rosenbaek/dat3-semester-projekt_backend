@@ -7,6 +7,7 @@ package dtos.user;
 
 import dtos.stock.AddTransactionDTO;
 import dtos.stock.CurrencyDTO;
+import dtos.stock.GroupDTO;
 import dtos.stock.NewsDTO;
 import dtos.stock.PortfolioValueDTO;
 import dtos.stock.TransactionDTO;
@@ -25,8 +26,10 @@ public class UserDTO {
     private List<PortfolioValueDTO> historicalPortFolioValue = new ArrayList<>();
     private String password;
     private List<RoleDTO> roles = new ArrayList<>();
+    private List<GroupDTO> groups = new ArrayList<>();
     private List<TransactionDTO> transactions = new ArrayList<>();
     private List<NewsDTO> news = new ArrayList<>();
+    
     
     public UserDTO(User user) {
         this.username = user.getUserName();
@@ -36,6 +39,9 @@ public class UserDTO {
             this.defaultCurrency = user.getCurrencyCode().getCode();
         }
         user.getHistoricalPortfolioValues().forEach(pfv->this.historicalPortFolioValue.add(new PortfolioValueDTO(pfv)));
+        if(!(user.getGroups().isEmpty())){
+            user.getGroups().forEach(group->this.groups.add(new GroupDTO(group)));
+        }
     }
 
     public UserDTO() {

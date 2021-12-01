@@ -68,6 +68,7 @@ public class LoginEndpointTest {
             em.getTransaction().begin();
             //Delete existing users and roles to get a "fresh" database
             em.createNamedQuery("Transaction.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Group.deleteAllRows").executeUpdate();
             em.createNamedQuery("Stock.deleteAllRows").executeUpdate();
             em.createNamedQuery("PortfolioValue.deleteAllRows").executeUpdate();
             em.createNamedQuery("User.deleteAllRows").executeUpdate();

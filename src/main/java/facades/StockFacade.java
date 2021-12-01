@@ -106,7 +106,7 @@ public class StockFacade {
         try {
             em.getTransaction().begin();
             User user = em.find(User.class,username);
-            Double totalPortFolioValue = Utility.calcTotalPortFolioValue(user);
+            Double totalPortFolioValue = Utility.calcTotalPortFolioValue(user.getTransactionList(),user.getCurrencyCode());
             PortfolioValue tpfv = new PortfolioValue(totalPortFolioValue);
             
             boolean persist = true;

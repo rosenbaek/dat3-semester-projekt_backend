@@ -48,10 +48,12 @@ public class StockResource {
         String username = securityContext.getUserPrincipal().getName();
         
         //Get user from database
+        //Updates stock live value and currency values
         User user = stockFacade.getUserData(username);
         
-        Double totalPortFolioValue = Utility.calcTotalPortFolioValue(user);
+        Double totalPortFolioValue = Utility.calcTotalPortFolioValue(user.getTransactionList(),user.getCurrencyCode());
       
+        
         
         UserDTO userDTO = new UserDTO(user);
         userDTO.setTotalPortfolioValue(totalPortFolioValue);
