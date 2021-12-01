@@ -3,6 +3,7 @@ package facades;
 
 import dtos.stock.NewsDTO;
 import entities.Currency;
+import entities.Group;
 import entities.PortfolioValue;
 import utils.EMF_Creator;
 import entities.Role;
@@ -35,6 +36,7 @@ public class FacadeTest {
     private static Currency c1,c2,c3,c4;
     private static Transaction t1,t2,t3,t4;
     private static PortfolioValue pfv1,pfv2,pfv3,pfv4;
+    private static Group g1,g2,g3,g4;
     
 
     public FacadeTest() {
@@ -54,6 +56,7 @@ public class FacadeTest {
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Transaction.deleteAllRows").executeUpdate();
+            //em.createNamedQuery("Group.deleteAllRows").executeUpdate();
             em.createNamedQuery("Stock.deleteAllRows").executeUpdate();
             em.createNamedQuery("PortfolioValue.deleteAllRows").executeUpdate();
             em.createNamedQuery("User.deleteAllRows").executeUpdate();
@@ -77,7 +80,10 @@ public class FacadeTest {
             s3 = new Stock("s3","test3 INC.",c3,3000.0);
             s4 = new Stock("s4","test4 INC.",c4,4000.0);
          
-            
+            g1 = new Group("Group1");
+            g2 = new Group("Group2");
+            g3 = new Group("Group3");
+            g4 = new Group("Group4");
             
             t1 = new Transaction(s1,100,1000.1);
             t2 = new Transaction(s2,200,2000.2);
@@ -115,6 +121,11 @@ public class FacadeTest {
             user.addTransaction(t2);
             both.addTransaction(t3);
             both.addTransaction(t4);
+            
+            user.addGroup(g1);
+            user.addGroup(g2);
+            user.addGroup(g3);
+            both.addGroup(g4);
            
             em.persist(userRole);
             em.persist(adminRole);
@@ -142,6 +153,11 @@ public class FacadeTest {
             em.persist(pfv2);
             em.persist(pfv3);
             em.persist(pfv4);
+            
+            //em.persist(g1);
+            //em.persist(g2);
+            //em.persist(g3);
+            //em.persist(g4);
             em.getTransaction().commit();
             
         } finally {
@@ -266,6 +282,11 @@ public class FacadeTest {
         int expected = 4;
         List<NewsDTO> newsDTOs = stockFacade.getNewsFromApi();
         assertEquals(expected, newsDTOs.size());
-    }  
+    }
+    
+    //@Test
+    public void testGetGroupsFromUser() {
+        
+    }
 
 }

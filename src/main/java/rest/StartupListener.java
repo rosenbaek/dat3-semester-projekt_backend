@@ -39,7 +39,7 @@ public class StartupListener implements ServletContextListener {
             
             //Loops through each user and updates their value (multi threaded for parallel run)
             ExecutorService executor = Executors.newCachedThreadPool();
-            List<String> usernames = stockFacade.getAllUserNames();
+            List<String> usernames = stockFacade.getAllUserNames(); 
                 usernames.forEach(username ->{
                     executor.submit(new Runnable() {
                         @Override 

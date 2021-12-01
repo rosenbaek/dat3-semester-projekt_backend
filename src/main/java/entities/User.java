@@ -52,6 +52,9 @@ public class User implements Serializable {
 
     @OneToMany(mappedBy = "user")
     private List<PortfolioValue> historicalPortfolioValues = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "user")
+    private List<Group> groups = new ArrayList<>();
 
     public List<String> getRolesAsStrings() {
         if (roleList.isEmpty()) {
@@ -130,5 +133,16 @@ public class User implements Serializable {
     public void setCurrencyCode(Currency currencyCode) {
         this.currencyCode = currencyCode;
     }
+
+    public List<Group> getGroups() {
+        return groups;
+    }
+
+    public void addGroup(Group group) {
+        this.groups.add(group);
+        group.setUser(this);
+    }
+    
+    
 
 }
