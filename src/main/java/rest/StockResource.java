@@ -3,6 +3,7 @@ package rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dtos.stock.AddTransactionDTO;
+import dtos.stock.GroupDTO;
 import dtos.user.UserDTO;
 import entities.Currency;
 import entities.Stock;
@@ -103,19 +104,26 @@ public class StockResource {
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     @RolesAllowed("user")
-    @Path("/group")
+    @Path("group")
     public Response addEditGroup(String jsonString) throws API_Exception, IOException {
         //Læg input JSON i DTO
-        //AddTransactionDTO inputDTO = gson.fromJson(jsonString, AddTransactionDTO.class);
+        GroupDTO inputDTO = gson.fromJson(jsonString, GroupDTO.class);
 
         //Hent username ud fra token - sikrer at man kun kan tilføje til sin egen user
         String username = securityContext.getUserPrincipal().getName();
         
         //Kald facade som skal finde, opdatere og returnere user
+        stockFacade.addEditGroup(inputDTO, username);
         
-        //output DTO
-         
+        User user = stockFacade.getUserData(username);
 
-        return Response.ok().entity(gson.toJson("")).build();
+        Double totalPortFolioValue = Utility.calcTotalPortFolioValue(user.getTransactionList(), user.getCurrencyCode());
+
+        UserDTO userDTO = new UserDTO(user);
+        userDTO.setTotalPortfolioValue(totalPortFolioValue);
+        //userDTO.setNewsDTOs(stockFacade.getNewsFromApi());
+        //return userDTO
+
+        return Response.ok().entity(gson.toJson(userDTO)).build();
     }
 }

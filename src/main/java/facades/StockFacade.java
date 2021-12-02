@@ -283,14 +283,17 @@ public class StockFacade {
             
             
             //find transactions by id
-            for (Integer id : groupDTO.getTransactionIds()) {
-                Transaction t = em.find(Transaction.class, id);
-                if (t == null) {
-                    throw new API_Exception("Transaction not found");
-                } else {
-                    transactions.add(t);
-                }  
-            } 
+            if (groupDTO.getTransactionIds() != null) {
+                for (Integer id : groupDTO.getTransactionIds()) {
+                    Transaction t = em.find(Transaction.class, id);
+                    if (t == null) {
+                        throw new API_Exception("Transaction not found");
+                    } else {
+                        transactions.add(t);
+                    }
+                }
+            }
+            
     
             Group group = groupDTO.getEntity();
             group = em.merge(group);

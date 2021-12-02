@@ -1,5 +1,8 @@
 package rest;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import dtos.stock.GroupDTO;
 import entities.Currency;
@@ -330,7 +333,7 @@ public class StockEndpointTest {
                 .body("news", hasSize(4));
     }
     
-    @Test
+    //@Test
     public void testGetUser_groups() {
         login(user.getUserName(), "testUser");
         List<GroupDTO> groups = given()
@@ -344,6 +347,25 @@ public class StockEndpointTest {
             new GroupDTO(g1),
             new GroupDTO(g2)
         ));
+    }
+    
+    @Test
+    public void testAddGroup() {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        JsonObject inputJson = new JsonObject();
+        inputJson.addProperty("name", "new_group");
+        JsonArray jsonArray = new JsonArray();
+        jsonArray.add(t1.getId());
+        jsonArray.add(t2.getId());
+        inputJson.add("transactionIds", jsonArray);
+        login(user.getUserName(), "testUser");
+        given()
+                .contentType("application/json")
+                .header("x-access-token", securityToken)
+                .body(inputJson.toString())
+                .when().post("/stock/group")
+                .then()
+                .body("groups", hasSize(4));
     }
     
 }
