@@ -139,6 +139,7 @@ public class User implements Serializable {
     }
 
     public void addGroup(Group group) {
+       
         this.groups.add(group);
         group.setUser(this);
     }

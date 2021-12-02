@@ -1,6 +1,11 @@
 package facades;
 
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import dtos.stock.GroupDTO;
 import dtos.stock.NewsDTO;
 import entities.Currency;
 import entities.Group;
@@ -119,7 +124,7 @@ public class FacadeTest {
             
             user.addTransaction(t1);
             user.addTransaction(t2);
-            both.addTransaction(t3);
+            
             both.addTransaction(t4);
             
             user.addGroup(g1);
@@ -297,4 +302,47 @@ public class FacadeTest {
         
     }
 
+    @Test
+    public void testAddGroup() throws API_Exception {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        JsonObject inputJson = new JsonObject();
+        inputJson.addProperty("name", "new_group");
+        JsonArray jsonArray = new JsonArray();
+        jsonArray.add(t1.getId());
+        jsonArray.add(t2.getId());
+        inputJson.add("transactionIds", jsonArray);
+        
+        GroupDTO groupDTO = gson.fromJson(inputJson, GroupDTO.class);
+        
+        User newUser = stockFacade.addEditGroup(groupDTO, user.getUserName());
+        assertEquals(user.getGroups().size()+1, newUser.getGroups().size());
+    }
+    
+    @Test
+    public void testEditGroup() throws API_Exception {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        JsonObject inputJson = new JsonObject();
+        inputJson.addProperty("name", "new_group_new");
+        inputJson.addProperty("id", g1.getId());
+        JsonArray jsonArray = new JsonArray();
+        jsonArray.add(t1.getId());
+        jsonArray.add(t2.getId());
+        jsonArray.add(t3.getId());
+        
+        inputJson.add("transactionIds", jsonArray);
+
+        GroupDTO groupDTO = gson.fromJson(inputJson, GroupDTO.class);
+        
+        User newUser = stockFacade.addEditGroup(groupDTO, user.getUserName());
+        
+        int index = 0;
+        
+        for (int i = 0; i < newUser.getGroups().size(); i++) {
+            if (newUser.getGroups().get(i).getId() == g1.getId()) {
+                index = i;
+            }
+        }
+        
+        assertEquals(g1.getTransactions().size() + 1, newUser.getGroups().get(index).getTransactions().size());
+    }
 }

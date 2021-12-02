@@ -93,6 +93,10 @@ public class Group implements Serializable {
     public void addTransaction(Transaction transaction) {
         this.transactions.add(transaction);
     }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
+    }
     
     
     public Double getValue (){

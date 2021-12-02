@@ -10,9 +10,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dtos.stock.GroupDTO;
 import dtos.stock.NewsDTO;
 import dtos.stock.StockDTO;
 import entities.Currency;
+import entities.Group;
 import entities.PortfolioValue;
 import entities.Stock;
 import entities.Transaction;
@@ -271,4 +273,37 @@ public class StockFacade {
         return newsDTOs;
     }
    
+    
+    public User addEditGroup(GroupDTO groupDTO, String username) throws API_Exception {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            User user = em.find(User.class, username);
+            List<Transaction> transactions = new ArrayList<>();
+            
+            
+            //find transactions by id
+            for (Integer id : groupDTO.getTransactionIds()) {
+                Transaction t = em.find(Transaction.class, id);
+                if (t == null) {
+                    throw new API_Exception("Transaction not found");
+                } else {
+                    transactions.add(t);
+                }  
+            } 
+    
+            Group group = groupDTO.getEntity();
+            group = em.merge(group);
+            group.setTransactions(transactions);
+            if (group.getUser() == null) {
+                user.addGroup(group);
+            }
+            
+            em.getTransaction().commit();
+            
+            return user;
+        } finally {
+            em.close();
+        }
+    }
 }

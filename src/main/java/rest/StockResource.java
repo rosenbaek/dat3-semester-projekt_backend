@@ -98,4 +98,24 @@ public class StockResource {
         
         return Response.ok().entity(gson.toJson(outPutDTO)).build();
     }
+    
+    @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    @RolesAllowed("user")
+    @Path("/group")
+    public Response addEditGroup(String jsonString) throws API_Exception, IOException {
+        //Læg input JSON i DTO
+        //AddTransactionDTO inputDTO = gson.fromJson(jsonString, AddTransactionDTO.class);
+
+        //Hent username ud fra token - sikrer at man kun kan tilføje til sin egen user
+        String username = securityContext.getUserPrincipal().getName();
+        
+        //Kald facade som skal finde, opdatere og returnere user
+        
+        //output DTO
+         
+
+        return Response.ok().entity(gson.toJson("")).build();
+    }
 }
