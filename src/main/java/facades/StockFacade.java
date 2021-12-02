@@ -204,7 +204,7 @@ public class StockFacade {
         String URL = "https://stock-data-yahoo-finance-alternative.p.rapidapi.com/v6/finance/quote?symbols="+finalSymbolsString;
         MakeOptions makeOptions = new MakeOptions("GET");
         makeOptions.addHeaders("X-RapidAPI-Host", "stock-data-yahoo-finance-alternative.p.rapidapi.com");
-        makeOptions.addHeaders("X-RapidAPI-Key", "69a80a6d47msh72db9b5d84026b3p151955jsnd1872b4c005c");
+        makeOptions.addHeaders("X-RapidAPI-Key", "28203dd768msh180dc4a2835a5abp1f1c73jsna6c0dcba0095");
         makeOptions.addHeaders("Accept", "application/json");
         
         String res = Utility.fetchData(URL, makeOptions);
