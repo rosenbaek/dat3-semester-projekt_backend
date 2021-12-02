@@ -243,7 +243,7 @@ public class StockFacade {
         String URL = "https://seeking-alpha.p.rapidapi.com/news/v2/list?category=market-news::stocks&size=4";
         MakeOptions makeOptions = new MakeOptions("GET");
         makeOptions.addHeaders("X-RapidAPI-Host", "seeking-alpha.p.rapidapi.com");
-        makeOptions.addHeaders("X-RapidAPI-Key", "69a80a6d47msh72db9b5d84026b3p151955jsnd1872b4c005c");
+        makeOptions.addHeaders("X-RapidAPI-Key", "28203dd768msh180dc4a2835a5abp1f1c73jsna6c0dcba0095");
         makeOptions.addHeaders("Accept", "application/json");
         
 
