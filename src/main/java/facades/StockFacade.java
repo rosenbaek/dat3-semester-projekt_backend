@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
+import javax.persistence.Cache;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
@@ -49,6 +50,8 @@ public class StockFacade {
     
     public User getUserData(String username) throws IOException, API_Exception {
         EntityManager em = emf.createEntityManager();
+        Cache cache = em.getEntityManagerFactory().getCache();
+        cache.evict(User.class); //Removes any users there is stored in the cache. Cache caused problems when deleting groups
         User user;
         try {
             user = em.find(User.class, username);
@@ -312,16 +315,21 @@ public class StockFacade {
     
     public Group deleteGroup(int id, String username) throws API_Exception{
         EntityManager em = emf.createEntityManager();
-        Group g = em.find(Group.class, id);
-        if (g == null){
-            throw new API_Exception("Could not remove group with id: "+id);
-            
-        }else if(!(username.equals(g.getUser().getUserName()))){
-            throw new API_Exception("You can only delete your own groups");
+        try {
+            Group g = em.find(Group.class, id);
+            if (g == null) {
+                throw new API_Exception("Could not remove group with id: " + id);
+
+            } else if (!(username.equals(g.getUser().getUserName()))) {
+                throw new API_Exception("You can only delete your own groups");
+            }
+            em.getTransaction().begin();
+            em.remove(g);
+            em.getTransaction().commit();
+            return g;
+        } finally {
+            em.close();
         }
-        em.getTransaction().begin();
-        em.remove(g);
-        em.getTransaction().commit();
-        return g;
+        
     }
 }
