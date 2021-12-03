@@ -57,7 +57,7 @@ public class StockResource {
         
         UserDTO userDTO = new UserDTO(user);
         userDTO.setTotalPortfolioValue(totalPortFolioValue);
-        //userDTO.setNewsDTOs(stockFacade.getNewsFromApi());
+        userDTO.setNewsDTOs(stockFacade.getNewsFromApi());
         //return userDTO
         return Response.ok().entity(gson.toJson(userDTO)).build();
     }
