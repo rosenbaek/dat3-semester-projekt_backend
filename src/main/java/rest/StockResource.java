@@ -2,10 +2,12 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import dtos.stock.AddTransactionDTO;
 import dtos.stock.GroupDTO;
 import dtos.user.UserDTO;
 import entities.Currency;
+import entities.Group;
 import entities.Stock;
 import entities.Transaction;
 import entities.User;
@@ -17,12 +19,14 @@ import java.util.List;
 import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
@@ -125,5 +129,23 @@ public class StockResource {
         //return userDTO
 
         return Response.ok().entity(gson.toJson(userDTO)).build();
+    }
+    
+    @DELETE
+    @Produces({MediaType.APPLICATION_JSON})
+    @RolesAllowed("user")
+    @Path("group/{id}")
+    public Response deleteGroup(@PathParam("id") int id) throws API_Exception{
+        String username = securityContext.getUserPrincipal().getName();
+        
+        //Delete
+        Group deletedGroup = stockFacade.deleteGroup(id,username);
+        
+        //Create response
+        JsonObject response = new JsonObject();
+        response.addProperty("code", 200);
+        response.addProperty("msg", "Succesfully deleted group with ID: "+deletedGroup.getId());
+        
+        return Response.ok().entity(gson.toJson(response)).build();
     }
 }

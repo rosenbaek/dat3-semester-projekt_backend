@@ -368,4 +368,17 @@ public class StockEndpointTest {
                 .body("groups", hasSize(4));
     }
     
+    @Test
+    public void testDeleteGroup() {
+        login(user.getUserName(), "testUser");
+        given()
+                .contentType("application/json")
+                .pathParam("id", g1.getId())
+                .header("x-access-token", securityToken)
+                .when()
+                .delete("/stock/group/{id}")
+                .then()
+                .statusCode(200)
+                .body("msg", equalTo("Succesfully deleted group with ID: "+g1.getId()));
+    }
 }

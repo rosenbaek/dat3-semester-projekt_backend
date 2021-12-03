@@ -309,4 +309,19 @@ public class StockFacade {
             em.close();
         }
     }
+    
+    public Group deleteGroup(int id, String username) throws API_Exception{
+        EntityManager em = emf.createEntityManager();
+        Group g = em.find(Group.class, id);
+        if (g == null){
+            throw new API_Exception("Could not remove group with id: "+id);
+            
+        }else if(!(username.equals(g.getUser().getUserName()))){
+            throw new API_Exception("You can only delete your own groups");
+        }
+        em.getTransaction().begin();
+        em.remove(g);
+        em.getTransaction().commit();
+        return g;
+    }
 }

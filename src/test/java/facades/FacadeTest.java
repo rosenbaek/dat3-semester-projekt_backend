@@ -345,4 +345,24 @@ public class FacadeTest {
         
         assertEquals(g1.getTransactions().size() + 1, newUser.getGroups().get(index).getTransactions().size());
     }
+    
+    @Test
+    public void testDeleteGroup() throws API_Exception {
+        int deleteId = g1.getId();
+        stockFacade.deleteGroup(deleteId,g1.getUser().getUserName());
+        EntityManager em = emf.createEntityManager();
+        Group deletedGroup = em.find(Group.class,g1.getId());
+        Assertions.assertNull(deletedGroup);
+    }
+    
+    @Test
+    public void testDeleteGroup_wrongUsername() throws API_Exception {
+        int deleteId = g1.getId();
+         API_Exception error = Assertions.assertThrows(API_Exception.class, () -> {
+            stockFacade.deleteGroup(deleteId,admin.getUserName());
+        });
+        assertEquals("You can only delete your own groups", error.getMessage());
+    }
+    
+   
 }
