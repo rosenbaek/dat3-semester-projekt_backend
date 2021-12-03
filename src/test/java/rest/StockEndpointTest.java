@@ -1,5 +1,8 @@
 package rest;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import dtos.stock.GroupDTO;
 import entities.Currency;
@@ -28,6 +31,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -330,7 +334,7 @@ public class StockEndpointTest {
                 .body("news", hasSize(4));
     }
     
-    @Test
+    //@Test
     public void testGetUser_groups() {
         login(user.getUserName(), "testUser");
         List<GroupDTO> groups = given()
@@ -344,5 +348,38 @@ public class StockEndpointTest {
             new GroupDTO(g1),
             new GroupDTO(g2)
         ));
+    }
+    
+    @Test
+    public void testAddGroup() {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        JsonObject inputJson = new JsonObject();
+        inputJson.addProperty("name", "new_group");
+        JsonArray jsonArray = new JsonArray();
+        jsonArray.add(t1.getId());
+        jsonArray.add(t2.getId());
+        inputJson.add("transactionIds", jsonArray);
+        login(user.getUserName(), "testUser");
+        given()
+                .contentType("application/json")
+                .header("x-access-token", securityToken)
+                .body(inputJson.toString())
+                .when().post("/stock/group")
+                .then()
+                .body("id", is(greaterThan(0)));
+    }
+    
+    @Test
+    public void testDeleteGroup() {
+        login(user.getUserName(), "testUser");
+        given()
+                .contentType("application/json")
+                .pathParam("id", g1.getId())
+                .header("x-access-token", securityToken)
+                .when()
+                .delete("/stock/group/{id}")
+                .then()
+                .statusCode(200)
+                .body("msg", equalTo("Succesfully deleted group with ID: "+g1.getId()));
     }
 }

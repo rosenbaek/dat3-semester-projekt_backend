@@ -1,6 +1,11 @@
 package facades;
 
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import dtos.stock.GroupDTO;
 import dtos.stock.NewsDTO;
 import entities.Currency;
 import entities.Group;
@@ -119,7 +124,7 @@ public class FacadeTest {
             
             user.addTransaction(t1);
             user.addTransaction(t2);
-            both.addTransaction(t3);
+            
             both.addTransaction(t4);
             
             user.addGroup(g1);
@@ -297,4 +302,84 @@ public class FacadeTest {
         
     }
 
+    @Test
+    public void testAddGroup() throws API_Exception {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        JsonObject inputJson = new JsonObject();
+        inputJson.addProperty("name", "new_group");
+        JsonArray jsonArray = new JsonArray();
+        jsonArray.add(t1.getId());
+        jsonArray.add(t2.getId());
+        inputJson.add("transactionIds", jsonArray);
+        
+        GroupDTO groupDTO = gson.fromJson(inputJson, GroupDTO.class);
+        
+        Group group = stockFacade.addEditGroup(groupDTO, user.getUserName());
+        Assertions.assertNotNull(group.getId());
+    }
+    
+    @Test
+    public void testEditGroup_transactionIncrease() throws API_Exception {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        JsonObject inputJson = new JsonObject();
+        inputJson.addProperty("name", "new_group_new");
+        inputJson.addProperty("id", g1.getId());
+        JsonArray jsonArray = new JsonArray();
+        jsonArray.add(t1.getId());
+        jsonArray.add(t2.getId());
+        jsonArray.add(t3.getId());
+        
+        inputJson.add("transactionIds", jsonArray);
+
+        GroupDTO groupDTO = gson.fromJson(inputJson, GroupDTO.class);
+        
+        Group group = stockFacade.addEditGroup(groupDTO, user.getUserName());
+        
+        
+        
+        assertEquals(g1.getTransactions().size()+1,group.getTransactions().size());
+    }
+    
+    @Test
+    public void testEditGroup_groupNameChange() throws API_Exception {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        JsonObject inputJson = new JsonObject();
+        inputJson.addProperty("name", "new_group_new");
+        inputJson.addProperty("id", g1.getId());
+        JsonArray jsonArray = new JsonArray();
+        jsonArray.add(t1.getId());
+        jsonArray.add(t2.getId());
+        jsonArray.add(t3.getId());
+        
+        inputJson.add("transactionIds", jsonArray);
+
+        GroupDTO groupDTO = gson.fromJson(inputJson, GroupDTO.class);
+        
+        Group group = stockFacade.addEditGroup(groupDTO, user.getUserName());
+        
+        
+        
+        Assertions.assertNotEquals(g1.getGroupName(),group.getGroupName());
+        assertEquals(g1.getId(), group.getId());
+    }
+    
+    @Test
+    public void testDeleteGroup() throws API_Exception {
+        int deleteId = g1.getId();
+        stockFacade.deleteGroup(deleteId,g1.getUser().getUserName());
+        EntityManager em = emf.createEntityManager();
+        Group deletedGroup = em.find(Group.class,g1.getId());
+        Assertions.assertNull(deletedGroup);
+    }
+    
+    @Test
+    public void testDeleteGroup_wrongUsername() throws API_Exception {
+        int deleteId = g1.getId();
+         API_Exception error = Assertions.assertThrows(API_Exception.class, () -> {
+            stockFacade.deleteGroup(deleteId,admin.getUserName());
+        });
+        assertEquals("You can only delete your own groups", error.getMessage());
+    }
+    
+   
 }

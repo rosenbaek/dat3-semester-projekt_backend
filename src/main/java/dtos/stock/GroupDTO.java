@@ -27,6 +27,14 @@ public class GroupDTO {
         this.transactionIds = group.getTransactionIds();
     }
 
+    public Group getEntity() {
+        Group group = new Group(this.name);
+        if (this.id != null) {
+            group.setId(this.id);
+        }
+        return group;
+    }
+    
     public Integer getId() {
         return id;
     }

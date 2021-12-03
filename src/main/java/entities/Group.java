@@ -8,6 +8,7 @@ package entities;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -93,6 +94,10 @@ public class Group implements Serializable {
     public void addTransaction(Transaction transaction) {
         this.transactions.add(transaction);
     }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
+    }
     
     
     public Double getValue (){
@@ -108,7 +113,37 @@ public class Group implements Serializable {
         });
         return result;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 83 * hash + Objects.hashCode(this.id);
+        hash = 83 * hash + Objects.hashCode(this.groupName);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Group other = (Group) obj;
+        if (!Objects.equals(this.groupName, other.groupName)) {
+            return false;
+        }
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
+    }
         
+    
     
 
     

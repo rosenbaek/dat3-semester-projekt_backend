@@ -10,9 +10,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dtos.stock.GroupDTO;
 import dtos.stock.NewsDTO;
 import dtos.stock.StockDTO;
 import entities.Currency;
+import entities.Group;
 import entities.PortfolioValue;
 import entities.Stock;
 import entities.Transaction;
@@ -26,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
+import javax.persistence.Cache;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
@@ -47,6 +50,8 @@ public class StockFacade {
     
     public User getUserData(String username) throws IOException, API_Exception {
         EntityManager em = emf.createEntityManager();
+        Cache cache = em.getEntityManagerFactory().getCache();
+        cache.evict(User.class); //Removes any users there is stored in the cache. Cache caused problems when deleting groups
         User user;
         try {
             user = em.find(User.class, username);
@@ -271,4 +276,60 @@ public class StockFacade {
         return newsDTOs;
     }
    
+    
+    public Group addEditGroup(GroupDTO groupDTO, String username) throws API_Exception {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            User user = em.find(User.class, username);
+            List<Transaction> transactions = new ArrayList<>();
+            
+            
+            //find transactions by id
+            if (groupDTO.getTransactionIds() != null) {
+                for (Integer id : groupDTO.getTransactionIds()) {
+                    Transaction t = em.find(Transaction.class, id);
+                    if (t == null) {
+                        throw new API_Exception("Transaction not found");
+                    } else {
+                        transactions.add(t);
+                    }
+                }
+            }
+            
+    
+            Group group = groupDTO.getEntity();
+            group = em.merge(group);
+            group.setTransactions(transactions);
+            if (group.getUser() == null) {
+                user.addGroup(group);
+            }
+            
+            em.getTransaction().commit();
+            
+            return group;
+        } finally {
+            em.close();
+        }
+    }
+    
+    public Group deleteGroup(int id, String username) throws API_Exception{
+        EntityManager em = emf.createEntityManager();
+        try {
+            Group g = em.find(Group.class, id);
+            if (g == null) {
+                throw new API_Exception("Could not remove group with id: " + id);
+
+            } else if (!(username.equals(g.getUser().getUserName()))) {
+                throw new API_Exception("You can only delete your own groups");
+            }
+            em.getTransaction().begin();
+            em.remove(g);
+            em.getTransaction().commit();
+            return g;
+        } finally {
+            em.close();
+        }
+        
+    }
 }

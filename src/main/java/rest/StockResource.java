@@ -2,9 +2,12 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import dtos.stock.AddTransactionDTO;
+import dtos.stock.GroupDTO;
 import dtos.user.UserDTO;
 import entities.Currency;
+import entities.Group;
 import entities.Stock;
 import entities.Transaction;
 import entities.User;
@@ -16,12 +19,14 @@ import java.util.List;
 import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
@@ -97,5 +102,43 @@ public class StockResource {
         
         
         return Response.ok().entity(gson.toJson(outPutDTO)).build();
+    }
+    
+    @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    @RolesAllowed("user")
+    @Path("group")
+    public Response addEditGroup(String jsonString) throws API_Exception, IOException {
+        //Læg input JSON i DTO
+        GroupDTO inputDTO = gson.fromJson(jsonString, GroupDTO.class);
+
+        //Hent username ud fra token - sikrer at man kun kan tilføje til sin egen user
+        String username = securityContext.getUserPrincipal().getName();
+        
+        //Kald facade som skal finde, opdatere og returnere user
+        Group group = stockFacade.addEditGroup(inputDTO, username);
+        
+        GroupDTO gdto = new GroupDTO(group);
+
+        return Response.ok().entity(gson.toJson(gdto)).build();
+    }
+    
+    @DELETE
+    @Produces({MediaType.APPLICATION_JSON})
+    @RolesAllowed("user")
+    @Path("group/{id}")
+    public Response deleteGroup(@PathParam("id") int id) throws API_Exception{
+        String username = securityContext.getUserPrincipal().getName();
+        
+        //Delete
+        Group deletedGroup = stockFacade.deleteGroup(id,username);
+        
+        //Create response
+        JsonObject response = new JsonObject();
+        response.addProperty("code", 200);
+        response.addProperty("msg", "Succesfully deleted group with ID: "+deletedGroup.getId());
+        
+        return Response.ok().entity(gson.toJson(response)).build();
     }
 }
