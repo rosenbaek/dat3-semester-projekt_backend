@@ -274,7 +274,7 @@ public class StockFacade {
     }
    
     
-    public User addEditGroup(GroupDTO groupDTO, String username) throws API_Exception {
+    public Group addEditGroup(GroupDTO groupDTO, String username) throws API_Exception {
         EntityManager em = emf.createEntityManager();
         try {
             em.getTransaction().begin();
@@ -304,7 +304,7 @@ public class StockFacade {
             
             em.getTransaction().commit();
             
-            return user;
+            return group;
         } finally {
             em.close();
         }

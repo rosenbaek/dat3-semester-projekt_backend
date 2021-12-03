@@ -117,18 +117,11 @@ public class StockResource {
         String username = securityContext.getUserPrincipal().getName();
         
         //Kald facade som skal finde, opdatere og returnere user
-        stockFacade.addEditGroup(inputDTO, username);
+        Group group = stockFacade.addEditGroup(inputDTO, username);
         
-        User user = stockFacade.getUserData(username);
+        GroupDTO gdto = new GroupDTO(group);
 
-        Double totalPortFolioValue = Utility.calcTotalPortFolioValue(user.getTransactionList(), user.getCurrencyCode());
-
-        UserDTO userDTO = new UserDTO(user);
-        userDTO.setTotalPortfolioValue(totalPortFolioValue);
-        //userDTO.setNewsDTOs(stockFacade.getNewsFromApi());
-        //return userDTO
-
-        return Response.ok().entity(gson.toJson(userDTO)).build();
+        return Response.ok().entity(gson.toJson(gdto)).build();
     }
     
     @DELETE

@@ -314,12 +314,12 @@ public class FacadeTest {
         
         GroupDTO groupDTO = gson.fromJson(inputJson, GroupDTO.class);
         
-        User newUser = stockFacade.addEditGroup(groupDTO, user.getUserName());
-        assertEquals(user.getGroups().size()+1, newUser.getGroups().size());
+        Group group = stockFacade.addEditGroup(groupDTO, user.getUserName());
+        Assertions.assertNotNull(group.getId());
     }
     
     @Test
-    public void testEditGroup() throws API_Exception {
+    public void testEditGroup_transactionIncrease() throws API_Exception {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         JsonObject inputJson = new JsonObject();
         inputJson.addProperty("name", "new_group_new");
@@ -333,17 +333,34 @@ public class FacadeTest {
 
         GroupDTO groupDTO = gson.fromJson(inputJson, GroupDTO.class);
         
-        User newUser = stockFacade.addEditGroup(groupDTO, user.getUserName());
+        Group group = stockFacade.addEditGroup(groupDTO, user.getUserName());
         
-        int index = 0;
         
-        for (int i = 0; i < newUser.getGroups().size(); i++) {
-            if (newUser.getGroups().get(i).getId() == g1.getId()) {
-                index = i;
-            }
-        }
         
-        assertEquals(g1.getTransactions().size() + 1, newUser.getGroups().get(index).getTransactions().size());
+        assertEquals(g1.getTransactions().size()+1,group.getTransactions().size());
+    }
+    
+    @Test
+    public void testEditGroup_groupNameChange() throws API_Exception {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        JsonObject inputJson = new JsonObject();
+        inputJson.addProperty("name", "new_group_new");
+        inputJson.addProperty("id", g1.getId());
+        JsonArray jsonArray = new JsonArray();
+        jsonArray.add(t1.getId());
+        jsonArray.add(t2.getId());
+        jsonArray.add(t3.getId());
+        
+        inputJson.add("transactionIds", jsonArray);
+
+        GroupDTO groupDTO = gson.fromJson(inputJson, GroupDTO.class);
+        
+        Group group = stockFacade.addEditGroup(groupDTO, user.getUserName());
+        
+        
+        
+        Assertions.assertNotEquals(g1.getGroupName(),group.getGroupName());
+        assertEquals(g1.getId(), group.getId());
     }
     
     @Test

@@ -31,6 +31,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -365,7 +366,7 @@ public class StockEndpointTest {
                 .body(inputJson.toString())
                 .when().post("/stock/group")
                 .then()
-                .body("groups", hasSize(4));
+                .body("id", is(greaterThan(0)));
     }
     
     @Test
