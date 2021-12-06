@@ -16,6 +16,7 @@ public class GroupDTO {
     private Integer id;
     private String name;
     private Double value;
+    private Double profLoss;
     private List<Integer> transactionIds;
 
     public GroupDTO(Group group) {
@@ -23,7 +24,8 @@ public class GroupDTO {
             this.id = group.getId();
         }
         this.name = group.getGroupName();
-        this.value = group.getValue();
+        this.value = group.getValue().getTotalPortFolioValue();
+        this.profLoss = group.getValue().getProfitValue();
         this.transactionIds = group.getTransactionIds();
     }
 
@@ -67,13 +69,22 @@ public class GroupDTO {
         this.transactionIds = transactionIds;
     }
 
+    public Double getProfLoss() {
+        return profLoss;
+    }
+
+    public void setProfLoss(Double profLoss) {
+        this.profLoss = profLoss;
+    }
+
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 71 * hash + Objects.hashCode(this.id);
-        hash = 71 * hash + Objects.hashCode(this.name);
-        hash = 71 * hash + Objects.hashCode(this.value);
-        hash = 71 * hash + Objects.hashCode(this.transactionIds);
+        hash = 53 * hash + Objects.hashCode(this.id);
+        hash = 53 * hash + Objects.hashCode(this.name);
+        hash = 53 * hash + Objects.hashCode(this.value);
+        hash = 53 * hash + Objects.hashCode(this.profLoss);
+        hash = 53 * hash + Objects.hashCode(this.transactionIds);
         return hash;
     }
 
@@ -98,11 +109,16 @@ public class GroupDTO {
         if (!Objects.equals(this.value, other.value)) {
             return false;
         }
+        if (!Objects.equals(this.profLoss, other.profLoss)) {
+            return false;
+        }
         if (!Objects.equals(this.transactionIds, other.transactionIds)) {
             return false;
         }
         return true;
     }
+
+    
     
     
     

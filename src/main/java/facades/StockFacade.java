@@ -52,6 +52,7 @@ public class StockFacade {
         EntityManager em = emf.createEntityManager();
         Cache cache = em.getEntityManagerFactory().getCache();
         cache.evict(User.class); //Removes any users there is stored in the cache. Cache caused problems when deleting groups
+        cache.evict(Group.class);
         User user;
         try {
             user = em.find(User.class, username);

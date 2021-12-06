@@ -101,9 +101,9 @@ public class Group implements Serializable {
     }
     
     
-    public Double getValue (){
+    public ResultDTO getValue (){
         ResultDTO resultDTO = Utility.calcPortFolio(this.transactions, this.user.getCurrencyCode());
-        return resultDTO.getTotalPortFolioValue();
+        return resultDTO;
     }
     
     public List<Integer> getTransactionIds (){
