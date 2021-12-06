@@ -22,6 +22,7 @@ import java.util.List;
 public class UserDTO {
     private String username;
     private Double totalPortfolioValue;
+    private Double profLoss;
     private String defaultCurrency;
     private List<PortfolioValueDTO> historicalPortFolioValue = new ArrayList<>();
     private String password;
@@ -77,6 +78,16 @@ public class UserDTO {
     public String getUsername() {
         return username;
     }
+
+    public Double getProfit() {
+        return profLoss;
+    }
+
+    public void setProfit(Double Profit) {
+        this.profLoss = Profit;
+    }
+    
+    
     
     
    

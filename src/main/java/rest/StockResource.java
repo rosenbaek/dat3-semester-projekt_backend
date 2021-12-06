@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import dtos.stock.AddTransactionDTO;
 import dtos.stock.GroupDTO;
+import dtos.stock.ResultDTO;
 import dtos.user.UserDTO;
 import edu.emory.mathcs.backport.java.util.Arrays;
 import entities.Group;
@@ -57,13 +58,14 @@ public class StockResource {
         //Updates stock live value and currency values
         User user = stockFacade.getUserData(username);
         
-        Double totalPortFolioValue = Utility.calcTotalPortFolioValue(user.getTransactionList(),user.getCurrencyCode());
+        ResultDTO resultDTO = Utility.calcPortFolio(user.getTransactionList(),user.getCurrencyCode());
       
         
         
         UserDTO userDTO = new UserDTO(user);
-        userDTO.setTotalPortfolioValue(totalPortFolioValue);
-        userDTO.setNewsDTOs(stockFacade.getNewsFromApi());
+        userDTO.setTotalPortfolioValue(resultDTO.getTotalPortFolioValue());
+        userDTO.setProfit(resultDTO.getProfitValue());
+        //userDTO.setNewsDTOs(stockFacade.getNewsFromApi());
         //return userDTO
         return Response.ok().entity(gson.toJson(userDTO)).build();
     }

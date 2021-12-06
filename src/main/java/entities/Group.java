@@ -5,6 +5,7 @@
  */
 package entities;
 
+import dtos.stock.ResultDTO;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -101,8 +102,8 @@ public class Group implements Serializable {
     
     
     public Double getValue (){
-        Double result = Utility.calcTotalPortFolioValue(this.transactions, this.user.getCurrencyCode());
-        return result;
+        ResultDTO resultDTO = Utility.calcPortFolio(this.transactions, this.user.getCurrencyCode());
+        return resultDTO.getTotalPortFolioValue();
     }
     
     public List<Integer> getTransactionIds (){

@@ -12,6 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dtos.stock.GroupDTO;
 import dtos.stock.NewsDTO;
+import dtos.stock.ResultDTO;
 import dtos.stock.StockDTO;
 import entities.Currency;
 import entities.Group;
@@ -110,8 +111,8 @@ public class StockFacade {
         try {
             em.getTransaction().begin();
             User user = em.find(User.class,username);
-            Double totalPortFolioValue = Utility.calcTotalPortFolioValue(user.getTransactionList(),user.getCurrencyCode());
-            PortfolioValue tpfv = new PortfolioValue(totalPortFolioValue);
+            ResultDTO resultDTO = Utility.calcPortFolio(user.getTransactionList(),user.getCurrencyCode());
+            PortfolioValue tpfv = new PortfolioValue(resultDTO.getTotalPortFolioValue());
             
             boolean persist = true;
             for (PortfolioValue val : user.getHistoricalPortfolioValues()) {

@@ -7,6 +7,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import dtos.stock.GroupDTO;
 import dtos.stock.NewsDTO;
+import dtos.stock.ResultDTO;
 import entities.Currency;
 import entities.Group;
 import entities.PortfolioValue;
@@ -257,8 +258,8 @@ public class FacadeTest {
     @Test
     public void User_totalPortFolioValue() throws IOException, API_Exception {
         Double expected = (t1.getUnits()*s1.getCurrentPrice())+(t2.getUnits()*s2.getCurrentPrice());
-        Double actual = Utility.calcTotalPortFolioValue(user.getTransactionList(),user.getCurrencyCode());
-        assertEquals(expected, actual);
+        ResultDTO resultDTO = Utility.calcPortFolio(user.getTransactionList(),user.getCurrencyCode());
+        assertEquals(expected, resultDTO.getTotalPortFolioValue());
     }
     
     @Test

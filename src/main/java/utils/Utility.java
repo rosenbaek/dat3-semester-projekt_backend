@@ -8,6 +8,7 @@ package utils;
 import java.util.Properties;
 import java.util.Set;
 import com.google.gson.*;
+import dtos.stock.ResultDTO;
 import entities.Currency;
 import entities.Transaction;
 import entities.User;
@@ -79,30 +80,36 @@ public class Utility {
         }
     }
     
-    public static Double calcTotalPortFolioValue(List<Transaction> transactions, Currency userPreferredCurrency){
-        Double result = 0.0;
+    public static ResultDTO calcPortFolio(List<Transaction> transactions, Currency userPreferredCurrency){
+        Double resultTotalPortFolioValue = 0.0;
+        Double resultProfitValue = 0.0;
         //Database base currency is USD!!!!!!
         
         
         for(Transaction t : transactions){
             Double currentPrice = t.getStocksSymbol().getCurrentPrice();
+            Double boughtPrice = t.getBoughtPrice();
+            Double proffLoss = (currentPrice - boughtPrice);
             
             String stockCurrencyCode = t.getStocksSymbol().getCurrency().getCode();
             Double stockCurrencyValue = t.getStocksSymbol().getCurrency().getValue();
             //convert to base currency
             if (!stockCurrencyCode.equals("usd") && stockCurrencyValue > 0.0) {    
                 currentPrice = (currentPrice / stockCurrencyValue);
+                proffLoss = (proffLoss / stockCurrencyValue);
             }
             
             int units = t.getUnits();
-            result = result + (currentPrice * units); 
+            resultTotalPortFolioValue = resultTotalPortFolioValue + (currentPrice * units);
+            resultProfitValue = resultProfitValue + (proffLoss * units);
         }
         
         //convert to userPreferredCurrency
         if (!userPreferredCurrency.getCode().equals("usd") && userPreferredCurrency.getValue() > 0.0) {
-            result = (result * userPreferredCurrency.getValue());
+            resultTotalPortFolioValue = (resultTotalPortFolioValue * userPreferredCurrency.getValue());
+            resultProfitValue = (resultProfitValue * userPreferredCurrency.getValue());
         }
-        return result;
+        return new ResultDTO(resultTotalPortFolioValue,resultProfitValue);
     }
     
     public static boolean isSameDay(Date date1, Date date2) {

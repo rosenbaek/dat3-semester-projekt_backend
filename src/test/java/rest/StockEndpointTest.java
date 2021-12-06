@@ -124,6 +124,7 @@ public class StockEndpointTest {
          
             
             
+            
             t1 = new Transaction(s1,100,1000.1);
             t2 = new Transaction(s2,200,2000.2);
             t3 = new Transaction(s3,300,3000.3);
@@ -308,6 +309,28 @@ public class StockEndpointTest {
                 .then()
                 .statusCode(200)
                 .body("totalPortfolioValue", equalTo(500000.0f)); //f is added as json returns a float and NOT a double
+    }
+    
+    @Test
+    public void testGetUser_profit() {
+            Double totalBoughtT1 = t1.getBoughtPrice() * t1.getUnits();
+            Double totalBoughtT2 = t2.getBoughtPrice() * t2.getUnits();
+            Double totalBought = totalBoughtT1 + totalBoughtT2;
+            
+            Double totalCurrentT1 = t1.getUnits() * t1.getStockSymbol().getCurrentPrice();
+            Double totalCurrentT2 = t2.getUnits() * t2.getStockSymbol().getCurrentPrice();
+            Double totalCurrent = totalCurrentT1 + totalCurrentT2;
+            
+            double proffLoss = totalCurrent - totalBought;
+            float expected = (float)proffLoss;
+        login(user.getUserName(), "testUser");
+        given()
+                .contentType("application/json")
+                .header("x-access-token", securityToken)
+                .when().get("/stock")
+                .then()
+                .statusCode(200)
+                .body("profLoss", equalTo(expected)); //f is added as json returns a float and NOT a double
     }
     
     @Test
