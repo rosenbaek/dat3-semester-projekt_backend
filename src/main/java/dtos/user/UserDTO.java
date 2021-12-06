@@ -69,7 +69,16 @@ public class UserDTO {
     public String getDefaultCurrency() {
         return defaultCurrency;
     }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
     
     
+   
     
 }

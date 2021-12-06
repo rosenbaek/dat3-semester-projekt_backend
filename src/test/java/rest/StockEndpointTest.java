@@ -382,4 +382,19 @@ public class StockEndpointTest {
                 .statusCode(200)
                 .body("msg", equalTo("Succesfully deleted group with ID: "+g1.getId()));
     }
+    
+    @Test
+    public void testDeleteTransactions() {
+        String input = "?ids=" + t1.getId() + "&ids=" + t2.getId();
+        System.out.println("Input: "+input);
+        login(user.getUserName(), "testUser");
+        given()
+                .contentType("application/json")
+                .header("x-access-token", securityToken)
+                .when()
+                .delete("/stock"+input)
+                .then()
+                .statusCode(200)
+                .body("msg", equalTo("Succesfully deleted transactions with IDs: ["+t1.getId()+", "+t2.getId()+"]"));
+    }
 }

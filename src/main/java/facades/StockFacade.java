@@ -21,7 +21,6 @@ import entities.Transaction;
 import entities.User;
 import errorhandling.API_Exception;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -154,6 +153,30 @@ public class StockFacade {
             em.close();
         }
     }
+    
+    
+    public void removeTransactions(List<Integer> transactionIds, String username) throws API_Exception {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            //Loop ids 
+            for (Integer transactionId : transactionIds) {
+                //inside loop get transaction from db
+                
+                Transaction t = em.find(Transaction.class, transactionId);
+                if (t == null) {
+                    throw new API_Exception("Transaction id "+transactionId+" Caused an error. Nothing deleted.");
+                } else if (!(username.equals(t.getUser().getUserName()))) {
+                    throw new API_Exception("You can only delete your own transactions. Nothing deleted");
+                }
+                em.remove(t);
+            }
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
+    
     
     public List<String> getAllStockSymbols(){
         EntityManager em = emf.createEntityManager();

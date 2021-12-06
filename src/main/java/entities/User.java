@@ -76,8 +76,10 @@ public class User implements Serializable {
     }
 
     public User(String userName, String userPass) {
+        if (userPass != null) {
+            this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt());
+        }
         this.userName = userName;
-        this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt());
     }
 
     public List<PortfolioValue> getHistoricalPortfolioValues() {

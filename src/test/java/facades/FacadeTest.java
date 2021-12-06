@@ -381,5 +381,45 @@ public class FacadeTest {
         assertEquals("You can only delete your own groups", error.getMessage());
     }
     
-   
+    @Test
+    public void testRemoveTransactions() throws API_Exception {
+        EntityManager em = emf.createEntityManager();
+        List<Integer> transactionIds = new ArrayList<>();
+        transactionIds.add(t1.getId());
+        stockFacade.removeTransactions(transactionIds, user.getUserName());
+        User newUser = em.find(User.class, user.getUserName());
+        assertEquals(user.getTransactionList().size() - transactionIds.size(), newUser.getTransactionList().size());
+    }
+    
+    @Test
+    public void testRemoveTransactions_Multiple() throws API_Exception {
+        EntityManager em = emf.createEntityManager();
+        List<Integer> transactionIds = new ArrayList<>();
+        transactionIds.add(t1.getId());
+        transactionIds.add(t2.getId());
+        stockFacade.removeTransactions(transactionIds, user.getUserName());
+        User newUser = em.find(User.class, user.getUserName());
+        assertEquals(user.getTransactionList().size() - transactionIds.size(), newUser.getTransactionList().size());
+    }
+    
+    @Test
+    public void testRemoveTransactions_WrongUsername() throws API_Exception {
+        List<Integer> transactionIds = new ArrayList<>();
+        transactionIds.add(t1.getId());
+        transactionIds.add(t4.getId());
+        API_Exception error = Assertions.assertThrows(API_Exception.class, () -> {
+            stockFacade.removeTransactions(transactionIds, user.getUserName());
+        });
+        assertEquals("You can only delete your own transactions. Nothing deleted", error.getMessage());
+    }
+    @Test
+    public void testRemoveTransactions_IdNotExist() throws API_Exception {
+        List<Integer> transactionIds = new ArrayList<>();
+        transactionIds.add(t1.getId());
+        transactionIds.add(999);
+        API_Exception error = Assertions.assertThrows(API_Exception.class, () -> {
+            stockFacade.removeTransactions(transactionIds, user.getUserName());
+        });
+        assertEquals("Transaction id 999 Caused an error. Nothing deleted.", error.getMessage());
+    }
 }

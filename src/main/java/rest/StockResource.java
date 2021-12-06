@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import dtos.stock.AddTransactionDTO;
 import dtos.stock.GroupDTO;
 import dtos.user.UserDTO;
-import entities.Currency;
+import edu.emory.mathcs.backport.java.util.Arrays;
 import entities.Group;
 import entities.Stock;
 import entities.Transaction;
@@ -27,6 +27,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
@@ -103,6 +104,29 @@ public class StockResource {
         
         return Response.ok().entity(gson.toJson(outPutDTO)).build();
     }
+    
+    @DELETE
+    @Produces({MediaType.APPLICATION_JSON})
+    @RolesAllowed("user")
+    public Response deleteGroup(@QueryParam("ids") List<String> ids) throws API_Exception {
+        String username = securityContext.getUserPrincipal().getName();
+        
+        System.out.println("ids: " + ids.toString());
+        
+        List<Integer> integerIds = new ArrayList<>();
+        
+        ids.forEach(val ->{integerIds.add(Integer.parseInt(val));});
+        //Delete
+        stockFacade.removeTransactions(integerIds, username);
+
+        //Create response
+        JsonObject response = new JsonObject();
+        response.addProperty("code", 200);
+        response.addProperty("msg", "Succesfully deleted transactions with IDs: " + ids.toString());
+
+        return Response.ok().entity(gson.toJson(response)).build();
+    }
+    
     
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
