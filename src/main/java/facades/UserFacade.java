@@ -85,6 +85,21 @@ public class UserFacade {
     }
     
     
+    public User editUser(User _user) throws API_Exception{
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            _user.setCurrencyCode(em.find(Currency.class, _user.getCurrencyCode().getCode()));
+            User user = em.find(User.class, _user.getUserName());
+            user.updateUser(_user);
+            em.getTransaction().commit();
+            return user;
+        } finally {
+            em.close();
+        }
+    }
+    
+    
 
 
 }

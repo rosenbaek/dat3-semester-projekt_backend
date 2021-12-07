@@ -230,10 +230,12 @@ public class LoginEndpointTest {
     
     @Test
     public void testCreateUser() {
+        login("admin", "test");
         String username = "new_test_user";
         String json = String.format("{\"username\": \"%s\", \"password\": \"%s\", \"roles\": [{\"rolename\":\"%s\"}]}", username, "pas123", "user");
         given()
                 .contentType("application/json")
+                .header("x-access-token", securityToken)
                 .body(json)
                 .when().post("/user")
                 .then()
@@ -242,10 +244,12 @@ public class LoginEndpointTest {
     
     @Test
     public void testCreateUserWithExistingUsername() {
+        login("admin", "test");
         String username = "user";
         String json = String.format("{\"username\": \"%s\", \"password\": \"%s\", \"roles\": [{\"rolename\":\"%s\"}] }", username, "pas123", "user", "dkk");
         given()
                 .contentType("application/json")
+                .header("x-access-token", securityToken)
                 .body(json)
                 .when().post("/user")
                 .then()

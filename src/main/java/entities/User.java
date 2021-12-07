@@ -1,5 +1,6 @@
 package entities;
 
+import dtos.user.UserDTO;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -146,6 +147,12 @@ public class User implements Serializable {
         group.setUser(this);
     }
     
+    public void updateUser (User user){
+        if(user.getUserPass() != null){
+            this.userPass = user.getUserPass();
+        }
+        this.currencyCode = user.getCurrencyCode();
+    }
     
 
 }

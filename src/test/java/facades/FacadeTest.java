@@ -36,6 +36,7 @@ public class FacadeTest {
 
     private static EntityManagerFactory emf;
     private static StockFacade stockFacade;
+    private static UserFacade userFacade;
     private static User user,admin,both;
     private static Role userRole,adminRole;
     private static Stock s1,s2,s3,s4;
@@ -52,6 +53,7 @@ public class FacadeTest {
     public static void setUpClass() {
        emf = EMF_Creator.createEntityManagerFactoryForTest();
        stockFacade = StockFacade.getStockFacade(emf);
+       userFacade = UserFacade.getUserFacade(emf);
     }
 
     
@@ -422,5 +424,20 @@ public class FacadeTest {
             stockFacade.removeTransactions(transactionIds, user.getUserName());
         });
         assertEquals("Transaction id 999 Caused an error. Nothing deleted.", error.getMessage());
+    }
+    
+    @Test
+    public void testEditUser() throws API_Exception {
+        User newUser = new User(user.getUserName(),null);
+        newUser.setCurrencyCode(c3);
+        User updatedUser = userFacade.editUser(newUser);
+        assertEquals(newUser.getUserName(), updatedUser.getUserName());
+    }
+    
+    @Test
+    public void testGetAllCurrencies() {
+        int expected = 4;
+        int actual = stockFacade.getAllCurrencies().size();
+        assertEquals(expected, actual);
     }
 }

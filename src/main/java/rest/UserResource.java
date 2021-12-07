@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
@@ -29,6 +30,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import security.errorhandling.AuthenticationException;
 import utils.EMF_Creator;
 
@@ -45,6 +47,9 @@ public class UserResource {
     
     @Context
     private UriInfo context;
+    
+    @Context
+    SecurityContext securityContext;
 
     /**
      * Creates a new instance of UserResource
@@ -55,9 +60,28 @@ public class UserResource {
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
+    @RolesAllowed("admin")
     public Response createUser(String jsonString) throws API_Exception, Exception {
         UserDTO userDTO = gson.fromJson(jsonString, UserDTO.class);
         UserDTO newUserDTO = USER_FACADE.createUser(userDTO);
+        return Response.ok().entity(gson.toJson(newUserDTO)).build();
+    }
+    
+    @PUT
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    @RolesAllowed({"user","admin"})
+     public Response editUser(String jsonString) throws API_Exception, Exception {
+        UserDTO userDTO = gson.fromJson(jsonString, UserDTO.class);
+        String username = securityContext.getUserPrincipal().getName();
+        
+        if(!(username.equals(userDTO.getUsername()))){
+            throw new API_Exception("You cannot edit another user");
+        }
+        
+        User user = userDTO.getEntity();
+        user = USER_FACADE.editUser(user);
+        UserDTO newUserDTO = new UserDTO(user);
         return Response.ok().entity(gson.toJson(newUserDTO)).build();
     }
 }

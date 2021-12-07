@@ -6,6 +6,8 @@
 package dtos.stock;
 
 import entities.Currency;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -27,5 +29,13 @@ public class CurrencyDTO {
     
     public Currency getEntity() {
         return new Currency(this.code, this.name, this.value);
+    }
+    
+    public static List<CurrencyDTO> getCurrencyDTOs (List<Currency> currencies){
+        List<CurrencyDTO> currencyDTos = new ArrayList<>();
+        currencies.forEach(c ->{
+            currencyDTos.add(new CurrencyDTO(c));
+        });
+        return currencyDTos;
     }
 }

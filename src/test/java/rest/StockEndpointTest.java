@@ -420,4 +420,17 @@ public class StockEndpointTest {
                 .statusCode(200)
                 .body("msg", equalTo("Succesfully deleted transactions with IDs: ["+t1.getId()+", "+t2.getId()+"]"));
     }
+    
+    @Test
+    public void testGetAllCurrencies() {
+        login(user.getUserName(), "testUser");
+        given()
+                .contentType("application/json")
+                .header("x-access-token", securityToken)
+                .when()
+                .get("/stock/currencies")
+                .then()
+                .statusCode(200)
+                .body("", hasSize(4));
+    }
 }

@@ -11,6 +11,7 @@ import dtos.stock.GroupDTO;
 import dtos.stock.NewsDTO;
 import dtos.stock.PortfolioValueDTO;
 import dtos.stock.TransactionDTO;
+import entities.Currency;
 import entities.User;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +60,10 @@ public class UserDTO {
     
     public User getEntity(){
         User user = new User(this.username, this.password);
+        if(this.defaultCurrency != null){
+            user.setCurrencyCode(new Currency());
+            user.getCurrencyCode().setCode(this.defaultCurrency);
+        }
         this.roles.forEach(roleDTO->user.addRole(roleDTO.getEntity()));
         return user;
     }

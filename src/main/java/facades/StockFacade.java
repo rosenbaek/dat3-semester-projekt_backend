@@ -357,4 +357,16 @@ public class StockFacade {
         }
         
     }
+    
+    public List<Currency> getAllCurrencies(){
+        List<Currency> currencies;
+        EntityManager em = emf.createEntityManager();
+        try{
+            TypedQuery<Currency> query = em.createQuery("SELECT c from Currency c", Currency.class);
+            currencies = query.getResultList();
+            return currencies;
+        } finally{
+            em.close();
+        }
+    }
 }

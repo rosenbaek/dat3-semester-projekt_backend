@@ -4,10 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import dtos.stock.AddTransactionDTO;
+import dtos.stock.CurrencyDTO;
 import dtos.stock.GroupDTO;
 import dtos.stock.ResultDTO;
 import dtos.user.UserDTO;
 import edu.emory.mathcs.backport.java.util.Arrays;
+import entities.Currency;
 import entities.Group;
 import entities.Stock;
 import entities.Transaction;
@@ -166,5 +168,14 @@ public class StockResource {
         response.addProperty("msg", "Succesfully deleted group with ID: "+deletedGroup.getId());
         
         return Response.ok().entity(gson.toJson(response)).build();
+    }
+    
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    @RolesAllowed("user")
+    @Path("currencies")
+    public Response getAllCurrencies() {
+        List<CurrencyDTO> currencies = CurrencyDTO.getCurrencyDTOs(stockFacade.getAllCurrencies());
+        return Response.ok().entity(gson.toJson(currencies)).build();
     }
 }
