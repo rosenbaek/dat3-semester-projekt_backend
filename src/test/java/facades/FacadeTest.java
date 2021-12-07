@@ -427,8 +427,18 @@ public class FacadeTest {
     }
     
     @Test
-    public void testEditUser_newCurrencyCode_emptyPass() throws API_Exception {
+    public void testEditUser_newCurrencyCode_emptyPass_null() throws API_Exception {
         User newUser = new User(user.getUserName(),null);
+        newUser.setCurrencyCode(new Currency());
+        newUser.getCurrencyCode().setCode("dkk");
+        User updatedUser = userFacade.editUser(newUser);
+        assertEquals("dkk", updatedUser.getCurrencyCode().getCode());
+        assertEquals(user.getUserPass(),updatedUser.getUserPass());
+    }
+    
+    @Test
+    public void testEditUser_newCurrencyCode_emptyPass_emptyString() throws API_Exception {
+        User newUser = new User(user.getUserName(),"");
         newUser.setCurrencyCode(new Currency());
         newUser.getCurrencyCode().setCode("dkk");
         User updatedUser = userFacade.editUser(newUser);

@@ -77,7 +77,7 @@ public class User implements Serializable {
     }
 
     public User(String userName, String userPass) {
-        if (userPass != null) {
+        if (userPass != null && !userPass.isEmpty()) {
             this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt());
         }
         this.userName = userName;
@@ -148,7 +148,7 @@ public class User implements Serializable {
     }
     
     public void updateUser (User user){
-        if(user.getUserPass() != null){
+        if(user.getUserPass() != null && !user.getUserPass().isEmpty()){
             this.userPass = user.getUserPass();
         }
         this.currencyCode = user.getCurrencyCode();
