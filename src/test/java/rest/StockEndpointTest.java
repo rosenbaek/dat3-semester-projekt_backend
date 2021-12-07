@@ -433,4 +433,39 @@ public class StockEndpointTest {
                 .statusCode(200)
                 .body("", hasSize(4));
     }
+    
+    @Test
+    public void testUpdateUser_newCurrency_emptyPassword() {
+        JsonObject inputJson = new JsonObject();
+        inputJson.addProperty("username", user.getUserName());
+        inputJson.addProperty("defaultCurrency", "dkk");
+        login(user.getUserName(), "testUser");
+        given()
+                .contentType("application/json")
+                .header("x-access-token", securityToken)
+                .body(inputJson)
+                .when()
+                .put("/user")
+                .then()
+                .statusCode(200)
+                .body("defaultCurrency", equalTo("dkk"));
+    }
+    
+    @Test
+    public void testUpdateUser_newCurrency_newPassword() {
+        JsonObject inputJson = new JsonObject();
+        inputJson.addProperty("username", user.getUserName());
+        inputJson.addProperty("defaultCurrency", "dkk");
+        inputJson.addProperty("password", "nytpassword");
+        login(user.getUserName(), "testUser");
+        given()
+                .contentType("application/json")
+                .header("x-access-token", securityToken)
+                .body(inputJson)
+                .when()
+                .put("/user")
+                .then()
+                .statusCode(200)
+                .body("defaultCurrency", equalTo("dkk"));
+    }
 }

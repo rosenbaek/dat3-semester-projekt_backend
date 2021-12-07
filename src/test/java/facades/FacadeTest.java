@@ -427,11 +427,23 @@ public class FacadeTest {
     }
     
     @Test
-    public void testEditUser() throws API_Exception {
+    public void testEditUser_newCurrencyCode_emptyPass() throws API_Exception {
         User newUser = new User(user.getUserName(),null);
-        newUser.setCurrencyCode(c3);
+        newUser.setCurrencyCode(new Currency());
+        newUser.getCurrencyCode().setCode("dkk");
         User updatedUser = userFacade.editUser(newUser);
-        assertEquals(newUser.getUserName(), updatedUser.getUserName());
+        assertEquals("dkk", updatedUser.getCurrencyCode().getCode());
+        assertEquals(user.getUserPass(),updatedUser.getUserPass());
+    }
+    
+    @Test
+    public void testEditUser_newCurrencyCode_newPass() throws API_Exception {
+        User newUser = new User(user.getUserName(),"nytPassword");
+        newUser.setCurrencyCode(new Currency());
+        newUser.getCurrencyCode().setCode("dkk");
+        User updatedUser = userFacade.editUser(newUser);
+        assertEquals("dkk", updatedUser.getCurrencyCode().getCode());
+        Assertions.assertNotEquals(user.getUserPass(),updatedUser.getUserPass());
     }
     
     @Test
