@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import dtos.stock.GroupDTO;
+import dtos.stock.HistoricalCurrencyDTO;
 import dtos.stock.NewsDTO;
 import dtos.stock.ResultDTO;
 import dtos.user.UserDTO;
@@ -486,4 +487,6 @@ public class FacadeTest {
         Assertions.assertNotNull(user);
         
     }
+    
+   
 }

@@ -10,7 +10,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dtos.stock.CurrencyDTO;
 import dtos.stock.GroupDTO;
+import dtos.stock.HistoricalCurrencyDTO;
 import dtos.stock.NewsDTO;
 import dtos.stock.ResultDTO;
 import dtos.stock.StockDTO;
@@ -22,8 +24,12 @@ import entities.Transaction;
 import entities.User;
 import errorhandling.API_Exception;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -216,6 +222,80 @@ public class StockFacade {
         }
     }
     
+    public ArrayList<HistoricalCurrencyDTO> historicalCurrenciesFromApi(String baseCurrency) throws IOException {
+        EntityManager em = emf.createEntityManager();
+        ArrayList<HistoricalCurrencyDTO> listOfValues = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+        
+        LocalDate startDate = today.minusMonths(1);
+        
+        String dateTo = today.format(DateTimeFormatter.ISO_LOCAL_DATE);
+        String dateFrom = startDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
+        String URL = "https://freecurrencyapi.net/api/v2/historical?apikey=23d576e0-4e8a-11ec-a99d-f5d85080afeb&date_from="+dateFrom+"&date_to="+dateTo+"&base_currency="+baseCurrency;
+        MakeOptions makeOptions = new MakeOptions("GET");
+
+        String res = Utility.fetchData(URL, makeOptions);
+        LocalDate day_7 = today.minusDays(7);
+        LocalDate day_14 = today.minusDays(14);
+        try {
+            JsonObject object = gson.fromJson(res, JsonObject.class);
+            JsonObject data = gson.fromJson(object.get("data"), JsonObject.class);
+            
+            String day7String = day_7.format(DateTimeFormatter.ISO_LOCAL_DATE);
+            String day14String = day_14.format(DateTimeFormatter.ISO_LOCAL_DATE);
+            String monthString = startDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
+            JsonObject todayObject = data.getAsJsonObject(dateTo);
+            JsonObject day7 = data.getAsJsonObject(day7String);
+            JsonObject day14 = data.getAsJsonObject(day14String);
+            JsonObject month = data.getAsJsonObject(monthString);
+            
+            Map<String,HistoricalCurrencyDTO> dtos = new HashMap<String, HistoricalCurrencyDTO>();
+            for (Map.Entry<String, JsonElement> todayEntry : todayObject.entrySet()) {
+                String key = todayEntry.getKey().toLowerCase();
+                Currency currency = em.find(Currency.class, key);
+                if (currency != null) {
+                    HistoricalCurrencyDTO dto = new HistoricalCurrencyDTO(currency);
+                    dto.setValue(todayEntry.getValue().getAsDouble());
+                    dtos.put(todayEntry.getKey(), dto);
+                }
+
+            }
+            for (Map.Entry<String, JsonElement> entry7 : day7.entrySet()) {
+                
+                if (dtos.containsKey(entry7.getKey())) {
+                    HistoricalCurrencyDTO dto = dtos.get(entry7.getKey());
+                    dto.setDay7(entry7.getValue().getAsDouble());
+                }
+                
+            }
+            
+            for (Map.Entry<String, JsonElement> entry14 : day14.entrySet()) {
+                if (dtos.containsKey(entry14.getKey())) {
+                    HistoricalCurrencyDTO dto = dtos.get(entry14.getKey());
+                    dto.setDay14(entry14.getValue().getAsDouble());
+                }
+
+            }
+            
+            for (Map.Entry<String, JsonElement> entryMonth : month.entrySet()) {
+                if (dtos.containsKey(entryMonth.getKey())) {
+                    HistoricalCurrencyDTO dto = dtos.get(entryMonth.getKey());
+                    dto.setLastMonth(entryMonth.getValue().getAsDouble());
+                }
+            }
+            
+            // Getting Collection of values from HashMap
+            Collection<HistoricalCurrencyDTO> values = dtos.values();
+            
+            // Creating an ArrayList of values
+            
+            listOfValues = new ArrayList<>(values);
+            
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return listOfValues;
+    }
     
     public Currency getCurrencyFromDatabase(String currencyCode) throws API_Exception{
         EntityManager em = emf.createEntityManager();

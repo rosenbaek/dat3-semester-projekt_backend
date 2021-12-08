@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import dtos.stock.AddTransactionDTO;
 import dtos.stock.CurrencyDTO;
 import dtos.stock.GroupDTO;
+import dtos.stock.HistoricalCurrencyDTO;
 import dtos.stock.ResultDTO;
 import dtos.user.UserDTO;
 import edu.emory.mathcs.backport.java.util.Arrays;
@@ -176,6 +177,15 @@ public class StockResource {
     @Path("currencies")
     public Response getAllCurrencies() {
         List<CurrencyDTO> currencies = CurrencyDTO.getCurrencyDTOs(stockFacade.getAllCurrencies());
+        return Response.ok().entity(gson.toJson(currencies)).build();
+    }
+    
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    @RolesAllowed({"user", "admin"})
+    @Path("historical/currencies/{baseCurrency}")
+    public Response getAllHistoricalCurrencies(@PathParam("baseCurrency") String baseCurrency) throws IOException {
+        List<HistoricalCurrencyDTO> currencies = stockFacade.historicalCurrenciesFromApi(baseCurrency);
         return Response.ok().entity(gson.toJson(currencies)).build();
     }
 }
