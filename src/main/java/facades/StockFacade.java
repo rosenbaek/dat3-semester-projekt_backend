@@ -202,12 +202,15 @@ public class StockFacade {
         try {
             JsonObject object = gson.fromJson(res, JsonObject.class);
             JsonObject data = gson.fromJson(object.get("data"), JsonObject.class);
+            em.getTransaction().begin();
             for (Map.Entry<String, JsonElement> entry : data.entrySet()) {
-                em.getTransaction().begin();
-                    Currency currency = em.find(Currency.class, entry.getKey());
-                    currency.setValue(entry.getValue().getAsDouble());
-                em.getTransaction().commit();
+                String currencyCode = entry.getKey();
+                    Currency currency = em.find(Currency.class, currencyCode);
+                    if(currency != null){
+                        currency.setValue(entry.getValue().getAsDouble());
+                    }
             }
+            em.getTransaction().commit();
         } catch (Exception e) {
             System.out.println("Error: "+ e.getMessage());
         }
