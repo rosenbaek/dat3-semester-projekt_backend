@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import dtos.stock.GroupDTO;
 import dtos.stock.NewsDTO;
 import dtos.stock.ResultDTO;
+import dtos.user.UserDTO;
 import entities.Currency;
 import entities.Group;
 import entities.PortfolioValue;
@@ -461,5 +462,28 @@ public class FacadeTest {
         int expected = 4;
         int actual = stockFacade.getAllCurrencies().size();
         assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void testCreateUser() throws Exception {
+        String username = "TEST_NEW_USER";
+        JsonObject inputJson = new JsonObject();
+        inputJson.addProperty("username", username);
+        inputJson.addProperty("password", "testUser");
+        inputJson.addProperty("defaultCurrency", "dkk");
+        JsonArray jsonArray = new JsonArray();
+        JsonObject roleObject = new JsonObject();
+        roleObject.addProperty("rolename", "user");
+        jsonArray.add(roleObject);
+        inputJson.add("roles", jsonArray);
+        
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        UserDTO userDTO = gson.fromJson(inputJson, UserDTO.class);
+        userFacade.createUser(userDTO);
+        
+        EntityManager em = emf.createEntityManager();
+        User user = em.find(User.class, username);
+        Assertions.assertNotNull(user);
+        
     }
 }

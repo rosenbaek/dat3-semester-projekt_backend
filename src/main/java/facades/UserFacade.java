@@ -67,13 +67,7 @@ public class UserFacade {
                     throw new NotFoundException("Role doesn't exist");
                 }
             }
-            if (userDTO.getDefaultCurrency() != null) {
-                Currency currency = em.find(Currency.class, userDTO.getDefaultCurrency());
-                if (currency == null) {
-                    throw new API_Exception("Currency does not exists", 404);
-                }
-                user.setCurrencyCode(currency);
-            }
+            user.setCurrencyCode(em.find(Currency.class,user.getCurrencyCode().getCode()));
             
             
             em.persist(user);
