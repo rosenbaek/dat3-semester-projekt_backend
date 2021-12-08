@@ -51,7 +51,7 @@ public class StockResource {
     
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    @RolesAllowed("user")
+    @RolesAllowed({"user","admin"})
     public Response getUserData() throws IOException, API_Exception {
         //get username from token
         String username = securityContext.getUserPrincipal().getName();
@@ -172,7 +172,7 @@ public class StockResource {
     
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    @RolesAllowed("user")
+    @RolesAllowed({"user","admin"})
     @Path("currencies")
     public Response getAllCurrencies() {
         List<CurrencyDTO> currencies = CurrencyDTO.getCurrencyDTOs(stockFacade.getAllCurrencies());
