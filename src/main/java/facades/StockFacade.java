@@ -224,7 +224,7 @@ public class StockFacade {
     
     public ArrayList<HistoricalCurrencyDTO> historicalCurrenciesFromApi(String baseCurrency) throws IOException {
         EntityManager em = emf.createEntityManager();
-        ArrayList<HistoricalCurrencyDTO> listOfValues = new ArrayList<>();
+        ArrayList<HistoricalCurrencyDTO> result = new ArrayList<>();
         LocalDate today = LocalDate.now();
         
         LocalDate startDate = today.minusMonths(1);
@@ -250,6 +250,7 @@ public class StockFacade {
             JsonObject month = data.getAsJsonObject(monthString);
             
             Map<String,HistoricalCurrencyDTO> dtos = new HashMap<String, HistoricalCurrencyDTO>();
+            
             for (Map.Entry<String, JsonElement> todayEntry : todayObject.entrySet()) {
                 String key = todayEntry.getKey().toLowerCase();
                 Currency currency = em.find(Currency.class, key);
@@ -284,17 +285,14 @@ public class StockFacade {
                 }
             }
             
-            // Getting Collection of values from HashMap
-            Collection<HistoricalCurrencyDTO> values = dtos.values();
+           
             
-            // Creating an ArrayList of values
-            
-            listOfValues = new ArrayList<>(values);
+            result = new ArrayList<>(dtos.values());
             
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
-        return listOfValues;
+        return result;
     }
     
     public Currency getCurrencyFromDatabase(String currencyCode) throws API_Exception{
