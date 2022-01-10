@@ -26,4 +26,4 @@ How to use:
 
 : Run main method in utils/SetupTestUsers.java
 
-: Enjoy!
+: Enjoy.!
